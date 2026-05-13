@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#d4af37" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="הציבור החרדי" />
+    <meta name="application-name" content="הציבור החרדי" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-TileColor" content="#000000" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    
+    <!-- Favicon & Icons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16x16.png" />
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152x152.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-180x180.png" />
+    <link rel="apple-touch-icon" sizes="167x167" href="/icons/icon-167x167.png" />
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+    
+    <!-- SEO - Static fallbacks with data-hid for @unhead/react -->
+    <title data-hid="title">הציבור החרדי - המגזין המצולם החרדי המוביל</title>
+    <meta name="description" content="הציבור החרדי - המגזין המצולם החרדי המוביל והמופץ ביותר בעולם היהודי. חדשות, תמונות, אירועים ושמחות מכל החסידויות." data-hid="description" />
+    <meta name="author" content="הציבור החרדי" />
+    <meta name="keywords" content="הציבור החרדי, אדמורים, חסידות, חדשות חרדיות, גלריית תמונות, אירועים, שמחות, טיש, מגזין חרדי" />
+    <link rel="canonical" href="https://hatzibur.co.il" data-hid="canonical" />
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="הציבור החרדי - המגזין המצולם החרדי המוביל" data-hid="og:title" />
+    <meta property="og:description" content="הציבור החרדי - המגזין המצולם החרדי המוביל והמופץ ביותר בעולם היהודי." data-hid="og:description" />
+    <meta property="og:image" content="/og-image.jpeg" data-hid="og:image" />
+    <meta property="og:url" content="https://hatzibur.co.il" data-hid="og:url" />
+    <meta property="og:type" content="website" data-hid="og:type" />
+    <meta property="og:locale" content="he_IL" />
+    <meta property="og:site_name" content="הציבור החרדי" />
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" data-hid="twitter:card" />
+    <meta name="twitter:title" content="הציבור החרדי - המגזין המצולם החרדי המוביל" data-hid="twitter:title" />
+    <meta name="twitter:description" content="המגזין המצולם החרדי המוביל והמופץ ביותר בעולם היהודי" data-hid="twitter:description" />
+    <meta name="twitter:image" content="/og-image.jpeg" data-hid="twitter:image" />
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Frank+Ruhl+Libre:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Splash Screens for iOS -->
+    <link rel="apple-touch-startup-image" href="/splash/splash-640x1136.png" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)" />
+    <link rel="apple-touch-startup-image" href="/splash/splash-750x1334.png" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" />
+    <link rel="apple-touch-startup-image" href="/splash/splash-1242x2208.png" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" />
+    <link rel="apple-touch-startup-image" href="/splash/splash-1125x2436.png" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
