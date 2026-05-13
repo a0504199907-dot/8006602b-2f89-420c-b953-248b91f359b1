@@ -19,6 +19,7 @@ import VideoPage from '@/pages/VideoPage';
 import VideoDetail from '@/pages/VideoDetail';
 import ArticleDetail from '@/pages/ArticleDetail';
 import AdStats from '@/pages/AdStats';
+import AdminDashboard from '@/pages/AdminDashboard';
 
 // New Newspaper Section Pages
 import NewspaperPage from '@/pages/NewspaperPage';
@@ -97,6 +98,7 @@ export default function App() {
         <Route path="/video/:id" element={<VideoDetail />} />
         <Route path="/article/:id" element={<ArticleDetail />} />
         <Route path="/ad-stats/:token" element={<AdStats />} />
+                <Route path="/admin-dashboard" element={<AdminDashboard />} />
         
         {/* New Newspaper Section Routes */}
         <Route path="/newspaper" element={<NewspaperPage />} />
