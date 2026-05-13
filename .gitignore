@@ -21,3 +21,27 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Environment variables (secrets - never commit)
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+.env.test
+
+# Build output
+.cache/
+.vite/
+.parcel-cache/
+
+# Cloudflare
+.wrangler/
+.dev.vars
+
+# OS
+Thumbs.db
+
+# IDE
+*.swp
+*.swo
