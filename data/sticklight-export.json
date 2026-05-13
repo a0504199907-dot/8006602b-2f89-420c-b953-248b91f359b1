@@ -1,0 +1,12 @@
+{
+    "campaigns": [
+          {"id": "33192246-13ce-43f9-a28b-62809beedef8", "name": "באנר רחב ראש עמוד", "client": "מוישי 1", "status": "active", "date": "2026-04-19"},
+          {"id": "363f0869-7650-45d6-84ed-aad03e59ef19", "name": "באנר תחתית עמוד", "client": "מוישי 2", "status": "active", "date": "2026-04-19"},
+          {"id": "34b12f9f-078c-4a7e-944b-21a13e90f9dc", "name": "באנר עמצע עמוד בית", "client": "מוישי 3", "status": "active", "date": "2026-04-19"},
+          {"id": "9adc8443-b3be-428f-b4c3-fe6bf49fe8d7", "name": "באנר דול עמודי פנים", "client": "מוישי 4", "status": "active", "date": "2026-04-19"},
+          {"id": "a84ee7b4-925f-41ef-8147-7af46cf92a31", "name": "באנר קטן עמודי פנים", "client": "מוישי 5", "status": "active", "date": "2026-04-19"}
+    ],
+    "export_date": "2026-05-13",
+    "source": "StickLight",
+    "project": "הציבור החרדי"
+}
