@@ -133,7 +133,7 @@ export function useHomepageData() {
       // Historical Events - select only needed fields
       supabase
         .from('historical_events')
-        .select('id, title, description, cover_image_url, event_year_hebrew, event_year_gregorian, chassidut, author')
+        .select('id, title, description, cover_image_url, images, event_year_hebrew, event_year_gregorian, chassidut, author')
         .eq('is_published', true)
         .order('display_order', { ascending: false })
         .order('event_year_gregorian', { ascending: false })
@@ -303,7 +303,7 @@ async function useHomepageDataFetch(): Promise<HomepageData> {
     supabase.from('news_batzibur').select('id, title, subtitle, image_url, author, hebrew_date, chassidut, location').eq('is_published', true).order('display_order', { ascending: false }).limit(5),
     supabase.from('before_18_years').select('id, title, week_parasha, year_hebrew, year_gregorian, images, photographer').eq('is_published', true).order('display_order', { ascending: false }).limit(5),
     supabase.from('bein_hatzibur').select('id, title, image_url, short_text, hebrew_date, photographer, chassidut').eq('is_published', true).order('display_order', { ascending: false }).limit(5),
-    supabase.from('historical_events').select('id, title, description, cover_image_url, event_year_hebrew, event_year_gregorian, chassidut, author').eq('is_published', true).order('display_order', { ascending: false }).limit(5),
+    supabase.from('historical_events').select('id, title, description, cover_image_url, images, event_year_hebrew, event_year_gregorian, chassidut, author').eq('is_published', true).order('display_order', { ascending: false }).limit(5),
     supabase.from('events').select('id, title, description, event_date, event_time, location, image_url, chassidut, event_type').eq('status', 'published').gte('event_date', new Date().toISOString().split('T')[0]).order('event_date', { ascending: true }).limit(5),
     supabase.from('hero_banners').select('id, title, subtitle, image_url, link_url, link_text, priority').eq('is_active', true).order('priority', { ascending: true }).limit(10),
     supabase.from('site_settings').select('value').eq('key', 'show_hero_banner').single()
