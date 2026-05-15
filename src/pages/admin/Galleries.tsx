@@ -417,7 +417,7 @@ export default function AdminGalleries() {
   };
 
   const filteredGalleries = galleries.filter((g) =>
-  g.title.toLowerCase().includes(search.toLowerCase())
+  g?.title?.toLowerCase()?.includes(search.toLowerCase())
   );
 
   const eventTypes = [
