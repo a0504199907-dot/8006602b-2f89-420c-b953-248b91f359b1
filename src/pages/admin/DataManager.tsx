@@ -69,9 +69,9 @@ export default function DataManager() {
 
   // Filtered data
   const filteredPhotographers = photographers.filter((p) =>
-  p.name.toLowerCase().includes(search.toLowerCase()) ||
-  p.phone && p.phone.includes(search) ||
-  p.email && p.email.toLowerCase().includes(search.toLowerCase())
+  p?.name?.toLowerCase()?.includes(search.toLowerCase()) ||
+  p?.phone && p?.phone?.includes(search) ||
+  p?.email && p?.email?.toLowerCase()?.includes(search.toLowerCase())
   );
 
   const filteredWriters = writers.filter((w) =>
