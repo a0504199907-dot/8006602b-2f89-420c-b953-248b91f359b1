@@ -1,18 +1,24 @@
-// PDF Flip Viewer Component with realistic page-flip effect
-import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { Document, Page, pdfjs } from 'react-pdf';
+// PDF Flip Viewer — magazine-style page-flip viewer.
+//
+// How it works:
+//  1. Loads the PDF via pdf.js (worker served from /pdf.worker.min.mjs to avoid CSP issues).
+//  2. Renders EVERY page off-screen to a canvas, captures it as a data URL.
+//  3. Feeds the array of images into HTMLFlipBook — so the flip animation
+//     never has to wait on react-pdf to re-render mid-flip.
+//  4. On mobile (<640px) uses single-page portrait mode; on larger screens
+//     uses two-page spread.
+import { useState, useCallback, useRef, useEffect } from 'react';
+import { pdfjs } from 'react-pdf';
 import HTMLFlipBook from 'react-pageflip';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   ChevronRight, ChevronLeft, ZoomIn, ZoomOut,
   Download, X, Maximize2, Minimize2, BookOpen,
-  RotateCcw, FileText, Loader2
-} from 'lucide-react';
-import 'react-pdf/dist/Page/AnnotationLayer.css';
-import 'react-pdf/dist/Page/TextLayer.css';
+  Loader2, FileText, AlertTriangle, RotateCcw } from
+'lucide-react';
 
-// Configure PDF.js worker - use jsdelivr which is more reliable
-pdfjs.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+// Worker is bundled in /public so it's served from the same origin (no CSP issues).
+pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
 
 interface PDFFlipViewerProps {
   pdfUrl: string;
@@ -22,290 +28,381 @@ interface PDFFlipViewerProps {
   onClose: () => void;
 }
 
-// Individual page component for the flipbook
-const FlipBookPage = React.forwardRef<HTMLDivElement, {pageNumber: number;width: number;height: number;}>(
-  ({ pageNumber, width, height }, ref) => {
-    return (
-      <div data-ev-id="ev_042b651576" ref={ref} className="bg-white shadow-lg">
-        <Page
-          pageNumber={pageNumber}
-          width={width}
-          height={height}
-          renderTextLayer={false}
-          renderAnnotationLayer={false}
-          className="!bg-white" />
-
-      </div>);
-
-  }
-);
-FlipBookPage.displayName = 'FlipBookPage';
+// Sensible default aspect ratio for a magazine page (close to A4).
+const DEFAULT_ASPECT = 1 / 1.414;
 
 export default function PDFFlipViewer(props: PDFFlipViewerProps) {
   const { pdfUrl, title, issueNumber, hebrewDate, onClose } = props;
 
-  const [numPages, setNumPages] = useState(0);
+  const [pages, setPages] = useState<string[]>([]);
+  const [aspectRatio, setAspectRatio] = useState(DEFAULT_ASPECT);
+  const [loadProgress, setLoadProgress] = useState(0); // 0..1
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   const [currentPage, setCurrentPage] = useState(0);
   const [scale, setScale] = useState(1);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [dimensions, setDimensions] = useState({ width: 400, height: 560 });
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== 'undefined' ? window.innerWidth < 640 : false
+  );
+
   const flipBookRef = useRef<any>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const cancelRenderRef = useRef(false);
 
-  // Calculate dimensions based on container
+  // Track viewport size — single page on phones, two pages on tablets+.
   useEffect(() => {
-    const updateDimensions = () => {
-      if (containerRef.current) {
-        const containerHeight = containerRef.current.clientHeight - 40;
-        const containerWidth = containerRef.current.clientWidth - 40;
-        // A4 aspect ratio approximately 1:1.4
-        const pageHeight = Math.min(containerHeight, 700);
-        const pageWidth = pageHeight / 1.4;
+    const onResize = () => setIsMobile(window.innerWidth < 640);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
 
-        // Make sure both pages fit
-        if (pageWidth * 2 > containerWidth) {
-          const adjustedWidth = containerWidth / 2 - 20;
-          setDimensions({
-            width: adjustedWidth,
-            height: adjustedWidth * 1.4
-          });
-        } else {
-          setDimensions({
-            width: pageWidth,
-            height: pageHeight
-          });
+  // Render every PDF page to a data-URL image. Done once when pdfUrl changes.
+  useEffect(() => {
+    cancelRenderRef.current = false;
+    setPages([]);
+    setLoadProgress(0);
+    setIsLoading(true);
+    setError(null);
+
+    const renderAll = async () => {
+      try {
+        const loadingTask = pdfjs.getDocument(pdfUrl);
+        const doc = await loadingTask.promise;
+        if (cancelRenderRef.current) return;
+
+        const totalPages = doc.numPages;
+        const rendered: string[] = [];
+
+        // Use first page to figure out aspect ratio.
+        const firstPage = await doc.getPage(1);
+        const firstViewport = firstPage.getViewport({ scale: 1 });
+        if (firstViewport.height > 0) {
+          setAspectRatio(firstViewport.width / firstViewport.height);
+        }
+
+        // Limit render scale: high enough for crisp text, low enough to avoid
+        // running out of memory on large issues.
+        const RENDER_SCALE = 1.5;
+
+        for (let i = 1; i <= totalPages; i++) {
+          if (cancelRenderRef.current) return;
+
+          const page = await doc.getPage(i);
+          const viewport = page.getViewport({ scale: RENDER_SCALE });
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          if (!ctx) throw new Error('Canvas not supported');
+
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
+
+          await page.render({ canvasContext: ctx, viewport, canvas }).promise;
+          rendered.push(canvas.toDataURL('image/jpeg', 0.85));
+          // Free the canvas memory now that we have the data URL.
+          canvas.width = 0;
+          canvas.height = 0;
+
+          if (cancelRenderRef.current) return;
+          setLoadProgress(i / totalPages);
+        }
+
+        if (!cancelRenderRef.current) {
+          setPages(rendered);
+          setIsLoading(false);
+        }
+      } catch (err) {
+        console.error('PDF render error:', err);
+        if (!cancelRenderRef.current) {
+          setError('שגיאה בטעינת הגיליון. נסו לרענן את הדף.');
+          setIsLoading(false);
         }
       }
     };
 
-    updateDimensions();
-    window.addEventListener('resize', updateDimensions);
-    return () => window.removeEventListener('resize', updateDimensions);
-  }, [isFullscreen]);
+    renderAll();
 
-  const onDocumentLoadSuccess = useCallback((data: {numPages: number;}) => {
-    setNumPages(data.numPages);
-    setIsLoading(false);
-    setError(null);
+    return () => {
+      cancelRenderRef.current = true;
+    };
+  }, [pdfUrl]);
+
+  // Lock body scroll while the viewer is open.
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prev;
+    };
   }, []);
 
-  const onDocumentLoadError = useCallback((err: Error) => {
-    console.error('PDF Load Error:', err);
-    setError('שגיאה בטעינת ה-PDF');
-    setIsLoading(false);
-  }, []);
+  // Compute the page width/height for HTMLFlipBook based on the stage size
+  // and whether we're in single- or double-page mode.
+  const [pageDims, setPageDims] = useState({ width: 380, height: 540 });
+  useEffect(() => {
+    const measure = () => {
+      const stage = stageRef.current;
+      if (!stage) return;
+
+      // Subtract padding for the navigation controls inside the stage.
+      const availWidth = stage.clientWidth - 32;
+      const availHeight = stage.clientHeight - 32;
+      if (availWidth <= 0 || availHeight <= 0) return;
+
+      // On mobile we render ONE page wide; on desktop we render TWO pages wide.
+      const pagesAcross = isMobile ? 1 : 2;
+      const widthFromHeight = availHeight * aspectRatio * pagesAcross;
+      const heightFromWidth = availWidth / pagesAcross / aspectRatio;
+
+      let pageWidth: number;
+      let pageHeight: number;
+
+      if (widthFromHeight <= availWidth) {
+        // Limited by height: use full available height.
+        pageHeight = availHeight;
+        pageWidth = pageHeight * aspectRatio;
+      } else {
+        // Limited by width: use full available width.
+        pageWidth = availWidth / pagesAcross;
+        pageHeight = pageWidth / aspectRatio;
+      }
+
+      setPageDims({
+        width: Math.max(200, Math.floor(pageWidth)),
+        height: Math.max(280, Math.floor(pageHeight))
+      });
+    };
+
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, [aspectRatio, isMobile, isFullscreen, pages.length]);
 
   const onFlip = useCallback((e: {data: number;}) => {
     setCurrentPage(e.data);
   }, []);
 
-  const goToPrevPage = () => {
-    if (flipBookRef.current) {
-      flipBookRef.current.pageFlip().flipPrev();
-    }
+  const goToPrev = () => {
+    flipBookRef.current?.pageFlip()?.flipPrev();
+  };
+  const goToNext = () => {
+    flipBookRef.current?.pageFlip()?.flipNext();
   };
 
-  const goToNextPage = () => {
-    if (flipBookRef.current) {
-      flipBookRef.current.pageFlip().flipNext();
-    }
-  };
-
-  const goToPage = (page: number) => {
-    if (flipBookRef.current) {
-      flipBookRef.current.pageFlip().flip(page);
-    }
-  };
-
-  const zoomIn = () => setScale((s) => Math.min(s + 0.1, 1.5));
+  const zoomIn = () => setScale((s) => Math.min(s + 0.1, 1.8));
   const zoomOut = () => setScale((s) => Math.max(s - 0.1, 0.6));
   const resetZoom = () => setScale(1);
   const toggleFullscreen = () => setIsFullscreen((f) => !f);
 
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'ArrowRight') goToPrevPage(); // RTL
-    if (e.key === 'ArrowLeft') goToNextPage(); // RTL
-    if (e.key === 'Escape') onClose();
+  // Keyboard navigation — RTL: right arrow = previous, left arrow = next.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight') goToPrev();
+      else if (e.key === 'ArrowLeft') goToNext();
+      else if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
   }, [onClose]);
 
   const displayTitle = title || 'גליון';
-  const subtitleParts = [];
+  const subtitleParts: string[] = [];
   if (issueNumber) subtitleParts.push('#' + issueNumber);
   if (hebrewDate) subtitleParts.push(hebrewDate);
-  const subtitle = subtitleParts.join(' | ');
+  const subtitle = subtitleParts.join(' · ');
 
-  const scaledWidth = dimensions.width * scale;
-  const scaledHeight = dimensions.height * scale;
+  const pagesAcross = isMobile ? 1 : 2;
+  const visiblePageLabel = pagesAcross === 2 && currentPage + 1 < pages.length ?
+  `${currentPage + 1}–${currentPage + 2}` :
+  `${currentPage + 1}`;
 
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 bg-black/95 flex flex-col"
-      onClick={onClose}
-      onKeyDown={handleKeyDown}
-      tabIndex={0}>
+      className="fixed inset-0 z-[100] bg-black/95 flex flex-col"
+      role="dialog"
+      aria-modal="true"
+      aria-label={`${displayTitle} ${subtitle}`}>
 
-      <div data-ev-id="ev_420c7c8bfa"
-      className={`flex flex-col h-full ${isFullscreen ? '' : 'max-w-7xl mx-auto'} w-full`}
-      onClick={(e) => e.stopPropagation()}>
-
-        {/* Header */}
-        <div data-ev-id="ev_aaaca3e613" className="bg-primary/90 backdrop-blur-sm text-white p-3 flex items-center justify-between shrink-0">
-          <div data-ev-id="ev_0c62a3129d" className="flex items-center gap-3">
-            <BookOpen className="w-6 h-6 text-secondary" />
-            <div data-ev-id="ev_f2863da543">
-              <h3 data-ev-id="ev_30af46540c" className="font-bold text-lg font-serif">{displayTitle}</h3>
-              {subtitle && <p data-ev-id="ev_763c8dfb19" className="text-white/70 text-sm">{subtitle}</p>}
-            </div>
-          </div>
-
-          <div data-ev-id="ev_ac2d5fc7c7" className="flex items-center gap-2">
-            <div data-ev-id="ev_42eb40ec64" className="flex items-center gap-1 bg-white/10 rounded-lg px-2 py-1">
-              <button data-ev-id="ev_4a6f6a83fd" onClick={zoomOut} disabled={scale <= 0.6} className="p-2 hover:bg-white/10 rounded disabled:opacity-30">
-                <ZoomOut className="w-4 h-4" />
-              </button>
-              <button data-ev-id="ev_eccd6bd069" onClick={resetZoom} className="px-2 py-1 hover:bg-white/10 rounded text-sm min-w-[60px]">
-                {Math.round(scale * 100)}%
-              </button>
-              <button data-ev-id="ev_c5ac7f1537" onClick={zoomIn} disabled={scale >= 1.5} className="p-2 hover:bg-white/10 rounded disabled:opacity-30">
-                <ZoomIn className="w-4 h-4" />
-              </button>
-            </div>
-
-            <button data-ev-id="ev_409113923a" onClick={toggleFullscreen} className="p-2 hover:bg-white/10 rounded-lg">
-              {isFullscreen ? <Minimize2 className="w-5 h-5" /> : <Maximize2 className="w-5 h-5" />}
-            </button>
-
-            <a data-ev-id="ev_26d4291c14" href={pdfUrl} download className="p-2 hover:bg-white/10 rounded-lg" target="_blank" rel="noopener noreferrer">
-              <Download className="w-5 h-5" />
-            </a>
-
-            <button data-ev-id="ev_89480dcd47" onClick={onClose} className="p-2 hover:bg-red-500/50 rounded-lg mr-2">
-              <X className="w-5 h-5" />
-            </button>
+      {/* Header */}
+      <div data-ev-id="ev_pdf_header" className="bg-primary/95 backdrop-blur-sm text-white px-3 sm:px-4 py-2 sm:py-3 flex items-center justify-between gap-2 shrink-0">
+        <div data-ev-id="ev_pdf_title" className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+          <BookOpen className="w-5 h-5 sm:w-6 sm:h-6 text-secondary shrink-0" />
+          <div data-ev-id="ev_pdf_title_text" className="min-w-0">
+            <h3 className="font-bold text-sm sm:text-lg font-serif truncate">{displayTitle}</h3>
+            {subtitle && <p className="text-white/70 text-xs sm:text-sm truncate">{subtitle}</p>}
           </div>
         </div>
 
-        {/* PDF Content */}
-        <div data-ev-id="ev_952a6de413" ref={containerRef} className="flex-1 overflow-hidden bg-gradient-to-b from-gray-800 to-gray-900 relative flex items-center justify-center">
+        <div data-ev-id="ev_pdf_actions" className="flex items-center gap-1 sm:gap-2 shrink-0">
+          {/* Zoom: hidden on phones to save room */}
+          <div data-ev-id="ev_pdf_zoom" className="hidden md:flex items-center gap-1 bg-white/10 rounded-lg px-1">
+            <button onClick={zoomOut} disabled={scale <= 0.6} aria-label="הקטן" className="p-2 hover:bg-white/10 rounded disabled:opacity-30">
+              <ZoomOut className="w-4 h-4" />
+            </button>
+            <button onClick={resetZoom} aria-label="איפוס זום" className="px-2 py-1 hover:bg-white/10 rounded text-xs min-w-[50px]">
+              {Math.round(scale * 100)}%
+            </button>
+            <button onClick={zoomIn} disabled={scale >= 1.8} aria-label="הגדל" className="p-2 hover:bg-white/10 rounded disabled:opacity-30">
+              <ZoomIn className="w-4 h-4" />
+            </button>
+          </div>
+
+          <button onClick={toggleFullscreen} aria-label="מסך מלא" className="hidden sm:flex p-2 hover:bg-white/10 rounded-lg">
+            {isFullscreen ? <Minimize2 className="w-5 h-5" /> : <Maximize2 className="w-5 h-5" />}
+          </button>
+
+          <a href={pdfUrl} download target="_blank" rel="noopener noreferrer" aria-label="הורד גיליון" className="p-2 hover:bg-white/10 rounded-lg">
+            <Download className="w-5 h-5" />
+          </a>
+
+          <button onClick={onClose} aria-label="סגור" className="p-2 hover:bg-red-500/50 rounded-lg">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+      </div>
+
+      {/* Stage (where the flipbook lives) */}
+      <div
+        data-ev-id="ev_pdf_stage"
+        ref={stageRef}
+        className="flex-1 overflow-hidden bg-gradient-to-b from-zinc-800 to-zinc-900 relative flex items-center justify-center">
+
+        <AnimatePresence>
           {isLoading &&
-          <div data-ev-id="ev_b0dc5337dd" className="absolute inset-0 flex items-center justify-center bg-gray-900 z-10">
-              <div data-ev-id="ev_e0ddb5ff01" className="text-center">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 flex items-center justify-center bg-zinc-900/70 backdrop-blur-sm z-10">
+              <div className="text-center px-6">
                 <Loader2 className="w-12 h-12 text-secondary animate-spin mx-auto mb-4" />
-                <p data-ev-id="ev_3208b55175" className="text-white/70">טוען גליון...</p>
+                <p className="text-white/90 font-medium mb-2">טוען את הגיליון…</p>
+                <div className="w-56 h-2 bg-white/10 rounded-full mx-auto overflow-hidden">
+                  <div
+                  className="h-full bg-secondary transition-all duration-200"
+                  style={{ width: `${Math.round(loadProgress * 100)}%` }} />
+
+                </div>
+                <p className="text-white/60 text-xs mt-2">{Math.round(loadProgress * 100)}%</p>
               </div>
-            </div>
+            </motion.div>
           }
+        </AnimatePresence>
 
-          {error &&
-          <div data-ev-id="ev_2c78fae067" className="absolute inset-0 flex items-center justify-center bg-gray-900 z-10">
-              <div data-ev-id="ev_e05999ec8e" className="text-center">
-                <FileText className="w-16 h-16 text-red-400 mx-auto mb-4" />
-                <p data-ev-id="ev_df3fca089a" className="text-red-400 text-lg mb-2">{error}</p>
-                <button data-ev-id="ev_7c0ab29248"
-              onClick={() => window.location.reload()}
-              className="mt-4 px-4 py-2 bg-secondary text-primary rounded-lg font-medium">
+        {error &&
+        <div className="absolute inset-0 flex items-center justify-center bg-zinc-900 z-10 p-6">
+            <div className="text-center max-w-sm">
+              <AlertTriangle className="w-14 h-14 text-amber-400 mx-auto mb-4" />
+              <p className="text-white text-lg mb-2 font-medium">{error}</p>
+              <p className="text-white/60 text-sm mb-4">אפשר להוריד את הגיליון ולפתוח באופן ידני</p>
+              <div className="flex items-center justify-center gap-2">
+                <a
+                href={pdfUrl}
+                download
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-secondary text-primary rounded-lg font-bold">
 
+                  <Download className="w-4 h-4" />
+                  הורד PDF
+                </a>
+                <button
+                onClick={() => window.location.reload()}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg">
+
+                  <RotateCcw className="w-4 h-4" />
                   נסה שוב
                 </button>
               </div>
             </div>
-          }
+          </div>
+        }
 
-          <Document
-            file={pdfUrl}
-            onLoadSuccess={onDocumentLoadSuccess}
-            onLoadError={onDocumentLoadError}
-            loading={null}
-            className="flex justify-center items-center">
+        {/* The flipbook only mounts once all pages are ready. This avoids
+            HTMLFlipBook trying to lay out pages before they exist. */}
+        {!isLoading && !error && pages.length > 0 &&
+        <div
+          className="transition-transform duration-200"
+          style={{ transform: `scale(${scale})` }}>
 
-            {numPages > 0 &&
             <HTMLFlipBook
-              ref={flipBookRef}
-              width={scaledWidth}
-              height={scaledHeight}
-              size="stretch"
-              minWidth={300}
-              maxWidth={800}
-              minHeight={400}
-              maxHeight={1000}
-              showCover={true}
-              mobileScrollSupport={true}
-              onFlip={onFlip}
-              className="shadow-2xl"
-              style={{ direction: 'rtl' } as any}
-              startPage={0}
-              drawShadow={true}
-              flippingTime={600}
-              usePortrait={false}
-              startZIndex={0}
-              autoSize={false}
-              maxShadowOpacity={0.5}
-              showPageCorners={true}
-              disableFlipByClick={false}
-              swipeDistance={30}
-              clickEventForward={true}
-              useMouseEvents={true}>
+            key={`${pagesAcross}-${pageDims.width}-${pageDims.height}`}
+            ref={flipBookRef}
+            width={pageDims.width}
+            height={pageDims.height}
+            size="fixed"
+            minWidth={200}
+            maxWidth={1200}
+            minHeight={280}
+            maxHeight={1600}
+            showCover={true}
+            mobileScrollSupport={false}
+            onFlip={onFlip}
+            className="shadow-2xl"
+            style={{} as any}
+            startPage={0}
+            drawShadow={true}
+            flippingTime={500}
+            usePortrait={isMobile}
+            startZIndex={0}
+            autoSize={false}
+            maxShadowOpacity={0.4}
+            showPageCorners={true}
+            disableFlipByClick={false}
+            swipeDistance={30}
+            clickEventForward={true}
+            useMouseEvents={true}>
 
-                {Array.from({ length: numPages }, (_, index) =>
-              <div data-ev-id="ev_11c9ef0de1" key={index} className="bg-white">
-                    <Page
-                  pageNumber={index + 1}
-                  width={scaledWidth}
-                  renderTextLayer={false}
-                  renderAnnotationLayer={false}
-                  className="!bg-white" />
+              {pages.map((imgSrc, i) =>
+            <div
+              data-ev-id="ev_pdf_page"
+              key={i}
+              className="bg-white overflow-hidden">
 
-                  </div>
-              )}
-              </HTMLFlipBook>
-            }
-          </Document>
+                  <img
+                src={imgSrc}
+                alt={`עמוד ${i + 1}`}
+                width={pageDims.width}
+                height={pageDims.height}
+                className="w-full h-full select-none pointer-events-none"
+                draggable={false} />
+
+                </div>
+            )}
+            </HTMLFlipBook>
+          </div>
+        }
+      </div>
+
+      {/* Footer / pagination */}
+      <div data-ev-id="ev_pdf_footer" className="bg-primary/95 backdrop-blur-sm text-white px-3 sm:px-4 py-2 sm:py-3 flex items-center justify-between gap-2 shrink-0">
+        <button
+          onClick={goToNext}
+          disabled={!pages.length || currentPage + pagesAcross >= pages.length}
+          className="flex items-center gap-1.5 bg-secondary hover:bg-secondary-light text-primary px-3 sm:px-5 py-2 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed transition-colors font-medium text-sm sm:text-base">
+
+          <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
+          <span className="hidden sm:inline">הקודם</span>
+        </button>
+
+        <div data-ev-id="ev_pdf_counter" className="flex items-center gap-2 bg-white/10 rounded-lg px-3 py-1.5 text-sm">
+          <span className="text-white/70">עמוד</span>
+          <span className="font-bold text-secondary">{visiblePageLabel}</span>
+          <span className="text-white/50">/ {pages.length || '…'}</span>
         </div>
 
-        {/* Footer Navigation */}
-        <div data-ev-id="ev_54c015e16b" className="bg-primary/90 backdrop-blur-sm text-white p-3 flex items-center justify-between shrink-0">
-          <div data-ev-id="ev_19da21e003" className="flex items-center gap-2">
-            <button data-ev-id="ev_42766b98ee" onClick={resetZoom} className="flex items-center gap-2 text-white/70 hover:text-white text-sm">
-              <RotateCcw className="w-4 h-4" />
-              איפוס
-            </button>
-          </div>
+        <button
+          onClick={goToPrev}
+          disabled={!pages.length || currentPage <= 0}
+          className="flex items-center gap-1.5 bg-secondary hover:bg-secondary-light text-primary px-3 sm:px-5 py-2 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed transition-colors font-medium text-sm sm:text-base">
 
-          <div data-ev-id="ev_b4e2008c72" className="flex items-center gap-3">
-            <button data-ev-id="ev_99149874c1"
-            onClick={goToNextPage}
-            disabled={currentPage >= numPages - 1}
-            className="flex items-center gap-2 bg-secondary hover:bg-secondary-light px-5 py-2 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
-
-              <ChevronRight className="w-5 h-5" />
-              <span data-ev-id="ev_8b4ee57a3b" className="font-medium">הקודם</span>
-            </button>
-
-            <div data-ev-id="ev_60cde46c4d" className="flex items-center gap-2 bg-white/10 rounded-lg px-3 py-1">
-              <span data-ev-id="ev_8b6e3ddcf3" className="text-white/70 text-sm">עמוד</span>
-              <span data-ev-id="ev_0a7e4858a1" className="font-bold text-secondary">{currentPage + 1}</span>
-              <span data-ev-id="ev_28b4c7f8b0" className="text-white/50">מתוך {numPages}</span>
-            </div>
-
-            <button data-ev-id="ev_91371917a9"
-            onClick={goToPrevPage}
-            disabled={currentPage <= 0}
-            className="flex items-center gap-2 bg-secondary hover:bg-secondary-light px-5 py-2 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
-
-              <span data-ev-id="ev_8c42177a01" className="font-medium">הבא</span>
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-          </div>
-
-          <div data-ev-id="ev_fc5b443c58" className="flex items-center gap-2">
-            <span data-ev-id="ev_5d68e86460" className="text-white/50 text-sm">{numPages} עמודים</span>
-          </div>
-        </div>
+          <span className="hidden sm:inline">הבא</span>
+          <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+        </button>
       </div>
     </motion.div>);
 
