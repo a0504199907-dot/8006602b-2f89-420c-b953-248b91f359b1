@@ -161,9 +161,9 @@ export default function AdminComments() {
 
   const filteredComments = comments.filter((comment) => {
     const matchesSearch =
-    comment.author_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    comment.author_email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    comment.content.toLowerCase().includes(searchTerm.toLowerCase());
+    comment?.author_name?.toLowerCase()?.includes(searchTerm.toLowerCase()) ||
+    comment?.author_email?.toLowerCase()?.includes(searchTerm.toLowerCase()) ||
+    comment?.content?.toLowerCase()?.includes(searchTerm.toLowerCase());
 
     const matchesType = filterType === 'all' || comment.article_type === filterType;
 
