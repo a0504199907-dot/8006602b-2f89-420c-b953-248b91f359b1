@@ -116,7 +116,7 @@ export default function VideoDetail() {
                   </span>
                 }
 
-                <h1 data-ev-id="ev_14abcec855" className="text-2xl md:text-3xl font-bold font-serif text-foreground mb-4">
+                <h1 data-ev-id="ev_14abcec855" className="text-xl sm:text-2xl md:text-3xl font-bold font-serif text-foreground mb-4 break-words">
                   {video.title}
                 </h1>
 

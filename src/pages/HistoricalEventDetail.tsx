@@ -120,12 +120,12 @@ export default function HistoricalEventDetail() {
             }
             </div>
 
-            <h1 data-ev-id="ev_3dcafbc649" className="text-3xl md:text-4xl font-bold text-foreground font-serif mb-4 leading-tight">
+            <h1 data-ev-id="ev_3dcafbc649" className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground font-serif mb-4 leading-tight break-words">
               {event.title}
             </h1>
 
             {event.description &&
-          <p data-ev-id="ev_8c38241216" className="text-xl text-muted-foreground mb-6">{event.description}</p>
+          <p data-ev-id="ev_8c38241216" className="text-lg sm:text-xl text-muted-foreground mb-6 break-words">{event.description}</p>
           }
 
             {/* Meta */}

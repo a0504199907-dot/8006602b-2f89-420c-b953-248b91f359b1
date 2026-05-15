@@ -161,8 +161,8 @@ export default function TextToSpeechPlayer({ text, title }: TextToSpeechPlayerPr
   const progress = duration > 0 ? currentTime / duration * 100 : 0;
 
   return (
-    <div data-ev-id="ev_66d2bdda89" className="bg-surface border border-border rounded-2xl p-4 shadow-sm">
-      <div data-ev-id="ev_b42bf6e63b" className="flex items-center gap-4">
+    <div data-ev-id="ev_66d2bdda89" className="bg-surface border border-border rounded-2xl p-3 sm:p-4 shadow-sm">
+      <div data-ev-id="ev_b42bf6e63b" className="flex items-center gap-2 sm:gap-4 flex-wrap sm:flex-nowrap">
         {/* Play/Pause Button */}
         <button data-ev-id="ev_13226de820"
         onClick={togglePlay}
@@ -183,7 +183,7 @@ export default function TextToSpeechPlayer({ text, title }: TextToSpeechPlayerPr
 
         {/* Progress Bar */}
         <div data-ev-id="ev_e5ba5a17b4"
-        className="flex-1 h-1.5 bg-muted rounded-full cursor-pointer relative group"
+        className="flex-1 min-w-[60px] h-1.5 bg-muted rounded-full cursor-pointer relative group"
         onClick={handleProgressClick}>
 
           <div data-ev-id="ev_c584b00091"

@@ -64,11 +64,11 @@ export default function BeinHatziburDetail() {
                 {item.chassidut}
               </span>
           }
-            <h1 data-ev-id="ev_c930f04cc4" className="text-3xl md:text-4xl font-bold text-foreground font-serif mb-4 leading-tight">
+            <h1 data-ev-id="ev_c930f04cc4" className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground font-serif mb-4 leading-tight break-words">
               {item.title}
             </h1>
             {item.caption &&
-          <p data-ev-id="ev_807968d87a" className="text-xl text-muted-foreground mb-6">{item.caption}</p>
+          <p data-ev-id="ev_807968d87a" className="text-lg sm:text-xl text-muted-foreground mb-6 break-words">{item.caption}</p>
           }
 
             {/* Meta */}

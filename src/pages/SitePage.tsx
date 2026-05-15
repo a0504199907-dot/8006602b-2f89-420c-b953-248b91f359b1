@@ -82,7 +82,7 @@ export default function SitePage() {
             <div data-ev-id="ev_0477a7f50d" className="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center">
               <Icon className="w-6 h-6 text-secondary" />
             </div>
-            <h1 data-ev-id="ev_6428ea2a62" className="text-3xl font-bold text-foreground font-serif">{page.title}</h1>
+            <h1 data-ev-id="ev_6428ea2a62" className="text-2xl sm:text-3xl font-bold text-foreground font-serif break-words">{page.title}</h1>
           </div>
 
           {/* Content */}

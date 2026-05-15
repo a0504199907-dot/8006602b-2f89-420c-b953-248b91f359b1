@@ -44,18 +44,18 @@ export default function ArticleDetailLayout({
 
   return (
     <Layout showSideAds={false}>
-      <div data-ev-id="ev_556e7d62ab" className="container mx-auto px-4 py-8">
+      <div data-ev-id="ev_556e7d62ab" className="container mx-auto px-4 py-6 sm:py-8">
         {/* Breadcrumbs */}
         {breadcrumbs && breadcrumbs.length > 0 &&
-        <div data-ev-id="ev_82c0a4406e" className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
+        <div data-ev-id="ev_82c0a4406e" className="flex items-center gap-2 text-sm text-muted-foreground mb-6 flex-wrap">
             {breadcrumbs.map((crumb, idx) =>
-          <span data-ev-id="ev_abfe8188b5" key={idx} className="flex items-center gap-2">
+          <span data-ev-id="ev_abfe8188b5" key={idx} className="flex items-center gap-2 min-w-0">
                 {crumb.href ?
-            <Link to={crumb.href} className="hover:text-secondary transition-colors">
+            <Link to={crumb.href} className="hover:text-secondary transition-colors truncate max-w-[150px] sm:max-w-none">
                     {crumb.label}
                   </Link> :
 
-            <span data-ev-id="ev_4b167df75d" className="text-foreground line-clamp-1">{crumb.label}</span>
+            <span data-ev-id="ev_4b167df75d" className="text-foreground line-clamp-1 max-w-[180px] sm:max-w-none">{crumb.label}</span>
             }
                 {idx < breadcrumbs.length - 1 && <span data-ev-id="ev_658e011669">/</span>}
               </span>
@@ -64,7 +64,7 @@ export default function ArticleDetailLayout({
         }
 
         {/* Main Grid: Content + Sidebar */}
-        <div data-ev-id="ev_084ff324d4" className="grid grid-cols-12 gap-8">
+        <div data-ev-id="ev_084ff324d4" className="grid grid-cols-12 gap-4 sm:gap-8">
           {/* Content - Right side (RTL) */}
           <div data-ev-id="ev_7555457045" className="col-span-12 lg:col-span-8">
             {children}

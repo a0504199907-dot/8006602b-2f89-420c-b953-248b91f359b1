@@ -72,7 +72,7 @@ export default function Advertise() {
             <div data-ev-id="ev_81b9690107" className="w-20 h-20 rounded-full bg-green-500/10 flex items-center justify-center mx-auto mb-6">
               <Check className="w-10 h-10 text-green-500" />
             </div>
-            <h1 data-ev-id="ev_450c05b03d" className="text-3xl font-bold text-foreground mb-4 font-serif">הבקשה נשלחה בהצלחה!</h1>
+            <h1 data-ev-id="ev_450c05b03d" className="text-2xl sm:text-3xl font-bold text-foreground mb-4 font-serif break-words">הבקשה נשלחה בהצלחה!</h1>
             <p data-ev-id="ev_9ae7c73a24" className="text-muted-foreground mb-8">
               תודה רבה! קיבלנו את בקשת הפרסום שלך.
               <br data-ev-id="ev_808d07ab43" />נחזור אליך בהקדם.
@@ -96,7 +96,7 @@ export default function Advertise() {
             <div data-ev-id="ev_fca6fa806b" className="w-16 h-16 rounded-2xl bg-secondary/10 flex items-center justify-center mx-auto mb-4">
               <Megaphone className="w-8 h-8 text-secondary" />
             </div>
-            <h1 data-ev-id="ev_73aa11da83" className="text-3xl font-bold text-foreground font-serif mb-2">פרסמו אצלנו</h1>
+            <h1 data-ev-id="ev_73aa11da83" className="text-2xl sm:text-3xl font-bold text-foreground font-serif mb-2 break-words">פרסמו אצלנו</h1>
             <p data-ev-id="ev_fcb5b4de41" className="text-muted-foreground">הגיעו לקהל החרדי הגדול בישראל</p>
           </div>
 
