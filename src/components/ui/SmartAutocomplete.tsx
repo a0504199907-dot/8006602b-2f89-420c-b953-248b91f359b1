@@ -35,12 +35,12 @@ export default function SmartAutocomplete({
 
   // Filter options based on search
   const filteredOptions = options.filter((opt) =>
-  opt.name.toLowerCase().includes(search.toLowerCase())
+  opt?.name?.toLowerCase()?.includes(search.toLowerCase())
   );
 
   // Check if search term is a new value
   const isNewValue = search.trim() && !options.some(
-    (opt) => opt.name.toLowerCase() === search.toLowerCase().trim()
+    (opt) => opt?.name?.toLowerCase() === search.toLowerCase().trim()
   );
 
   // Close dropdown when clicking outside
