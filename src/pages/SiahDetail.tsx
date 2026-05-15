@@ -126,11 +126,11 @@ export default function SiahDetail() {
                 {article.chassidut}
               </span>
           }
-            <h1 data-ev-id="ev_b342983112" className="text-3xl md:text-4xl font-bold text-foreground font-serif mb-4 leading-tight">
+            <h1 data-ev-id="ev_b342983112" className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground font-serif mb-4 leading-tight break-words">
               {article.title}
             </h1>
             {article.subtitle &&
-          <p data-ev-id="ev_0bfb335e0a" className="text-xl text-muted-foreground mb-6">{article.subtitle}</p>
+          <p data-ev-id="ev_0bfb335e0a" className="text-lg sm:text-xl text-muted-foreground mb-6 break-words">{article.subtitle}</p>
           }
 
             {/* Meta */}

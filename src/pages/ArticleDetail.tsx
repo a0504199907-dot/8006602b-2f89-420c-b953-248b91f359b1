@@ -193,7 +193,7 @@ export default function ArticleDetail() {
                   }
                 </div>
 
-                <h1 data-ev-id="ev_9d816a3180" className="text-3xl lg:text-4xl font-bold text-foreground leading-tight mb-6 font-serif">
+                <h1 data-ev-id="ev_9d816a3180" className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground leading-tight mb-6 font-serif break-words">
                   {article.title}
                 </h1>
 

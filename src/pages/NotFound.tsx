@@ -48,10 +48,10 @@ export default function NotFound() {
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.2 }}>
 
-          <h2 data-ev-id="ev_5a7cf0ea86" className="text-3xl md:text-4xl font-bold text-white mb-4 font-serif">
+          <h2 data-ev-id="ev_5a7cf0ea86" className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4 font-serif break-words">
             אופס! הדף לא נמצא
           </h2>
-          <p data-ev-id="ev_ed696fb768" className="text-gray-400 text-lg mb-8 max-w-md mx-auto">
+          <p data-ev-id="ev_ed696fb768" className="text-gray-400 text-base sm:text-lg mb-8 max-w-md mx-auto break-words">
             נראה שהדף שחיפשת לא קיים, הועבר או נמחק.
             אל דאגה - יש לנו עוד המון תוכן מעניין!
           </p>

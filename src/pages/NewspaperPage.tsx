@@ -87,7 +87,7 @@ export default function NewspaperPage() {
       <div data-ev-id="ev_9dea55da35" className="container mx-auto px-4 py-8">
         {/* Header */}
         <div data-ev-id="ev_029ec300c3" className="text-center mb-10">
-          <h1 data-ev-id="ev_2b55ca6a30" className="text-4xl font-bold text-foreground font-serif mb-3">עמוד שער</h1>
+          <h1 data-ev-id="ev_2b55ca6a30" className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground font-serif mb-3 break-words">עמוד שער</h1>
           <p data-ev-id="ev_b70cd3090d" className="text-muted-foreground text-lg">ארכיון גיליונות עיתון הציבור החרדי</p>
         </div>
 
@@ -128,7 +128,7 @@ export default function NewspaperPage() {
                     <div data-ev-id="ev_b92796ee29" className="mb-4">
                       <span data-ev-id="ev_f34cc1bf10" className="text-secondary text-lg font-bold">גיליון {latestIssue.issue_number}</span>
                     </div>
-                    <h2 data-ev-id="ev_a76aca781a" className="text-3xl md:text-4xl font-bold font-serif mb-4">{latestIssue.title}</h2>
+                    <h2 data-ev-id="ev_a76aca781a" className="text-2xl sm:text-3xl md:text-4xl font-bold font-serif mb-4 break-words">{latestIssue.title}</h2>
                     <div data-ev-id="ev_eb655ef8be" className="flex items-center gap-4 mb-4 text-white/80">
                       <span data-ev-id="ev_8c264dc18c" className="flex items-center gap-2">
                         <Calendar className="w-5 h-5" />

@@ -64,18 +64,18 @@ export default function SectionPageLayout({
 
   return (
     <Layout showSideAds={true} pageType="section" section={section}>
-      <div data-ev-id="ev_section_page" className="container mx-auto px-4 py-8">
+      <div data-ev-id="ev_section_page" className="container mx-auto px-4 py-6 sm:py-8">
         {/* Header */}
         <div data-ev-id="ev_section_header" className="mb-8">
           <div data-ev-id="ev_section_title_row" className="flex items-center gap-3 mb-2">
             <div data-ev-id="ev_gradient_line" className="w-1 h-10 rounded-full bg-gradient-to-b from-secondary via-secondary/60 to-transparent" />
-            <h1 data-ev-id="ev_section_title" className="text-3xl md:text-4xl font-bold text-foreground font-serif">
+            <h1 data-ev-id="ev_section_title" className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground font-serif break-words min-w-0 flex-1">
               {title}
             </h1>
             {icon && <span data-ev-id="ev_f1c993d169" className="text-secondary">{icon}</span>}
           </div>
           {subtitle &&
-          <p data-ev-id="ev_section_subtitle" className="text-muted-foreground text-lg mr-5">
+          <p data-ev-id="ev_section_subtitle" className="text-muted-foreground text-base sm:text-lg mr-4 sm:mr-5 break-words">
               {subtitle}
             </p>
           }
@@ -115,7 +115,7 @@ export default function SectionPageLayout({
                         </div>
                   }
                     </div>
-                    <h2 data-ev-id="ev_main_title" className="text-2xl md:text-3xl font-bold text-foreground mb-3 line-clamp-2 group-hover:text-secondary transition-colors">
+                    <h2 data-ev-id="ev_main_title" className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground mb-3 line-clamp-2 group-hover:text-secondary transition-colors break-words">
                       {mainItem.title}
                     </h2>
                     {(mainItem.subtitle || mainItem.description) &&
@@ -157,8 +157,8 @@ export default function SectionPageLayout({
                 transition={{ delay: (idx + 1) * 0.1 }}
                 className="flex-1">
 
-                    <Link to={`${basePath}/${item.id}`} className="group flex gap-4 h-full">
-                      <div data-ev-id="ev_side_img" className="w-40 md:w-48 shrink-0 rounded-xl overflow-hidden">
+                    <Link to={`${basePath}/${item.id}`} className="group flex gap-3 sm:gap-4 h-full">
+                      <div data-ev-id="ev_side_img" className="w-32 sm:w-40 md:w-48 shrink-0 rounded-xl overflow-hidden">
                         <img
                       data-ev-id="ev_1a9faec262"
                       src={getImage(item)}
@@ -172,7 +172,7 @@ export default function SectionPageLayout({
                             {getBadge(item)}
                           </span>
                     }
-                        <h3 data-ev-id="ev_2f819b185b" className="font-bold text-foreground text-lg line-clamp-2 group-hover:text-secondary transition-colors mb-2">
+                        <h3 data-ev-id="ev_2f819b185b" className="font-bold text-foreground text-base sm:text-lg line-clamp-2 group-hover:text-secondary transition-colors mb-2 break-words">
                           {item.title}
                         </h3>
                         <div data-ev-id="ev_7b2ce20b98" className="flex items-center gap-2 text-muted-foreground text-xs">

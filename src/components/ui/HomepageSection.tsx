@@ -85,17 +85,17 @@ export default function HomepageSection({
     <section data-ev-id="ev_f42c3c7663" className="py-8">
       <div data-ev-id="ev_9245c1c6d3" className="container mx-auto px-4">
         {/* Header */}
-        <div data-ev-id="ev_3631433e61" className="flex items-center justify-between mb-6">
+        <div data-ev-id="ev_3631433e61" className="flex items-center justify-between mb-6 gap-2">
           <Link
             to={moreLink}
-            className="text-muted-foreground hover:text-secondary text-sm font-medium flex items-center gap-1 transition-colors">
+            className="text-muted-foreground hover:text-secondary text-sm font-medium flex items-center gap-1 transition-colors shrink-0">
 
             <ChevronLeft className="w-4 h-4" />
             {moreLinkText || `עוד ב${title}`}
           </Link>
           
           <div data-ev-id="ev_e312a04584" className="flex items-center gap-2">
-            <h2 data-ev-id="ev_3cc73b5822" className="text-2xl md:text-3xl font-bold font-serif text-foreground">
+            <h2 data-ev-id="ev_3cc73b5822" className="text-xl sm:text-2xl md:text-3xl font-bold font-serif text-foreground break-words min-w-0">
               {title}
             </h2>
             <div data-ev-id="ev_45f2560200" className="flex flex-col gap-1">

@@ -12,8 +12,8 @@ export default function ArticlesPage() {
       {/* Page Header */}
       <div data-ev-id="ev_17d4918a65" className="bg-gradient-to-br from-articles to-amber-800 text-white py-10">
         <div data-ev-id="ev_6925bc5f74" className="container mx-auto px-4">
-          <h1 data-ev-id="ev_7498fe5523" className="text-4xl font-bold font-serif">מאמרים וכתבות</h1>
-          <p data-ev-id="ev_6c2b823c99" className="mt-2 opacity-80 text-lg">מאמרים מעמיקים, כתבות וסיפורים מעולם החסידות</p>
+          <h1 data-ev-id="ev_7498fe5523" className="text-2xl sm:text-3xl md:text-4xl font-bold font-serif break-words">מאמרים וכתבות</h1>
+          <p data-ev-id="ev_6c2b823c99" className="mt-2 opacity-80 text-base sm:text-lg break-words">מאמרים מעמיקים, כתבות וסיפורים מעולם החסידות</p>
           <div data-ev-id="ev_0345a30bf5" className="w-16 h-1 bg-secondary mt-4 rounded-full" />
         </div>
       </div>

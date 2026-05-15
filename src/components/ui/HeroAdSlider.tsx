@@ -150,7 +150,7 @@ export default function HeroAdSlider({
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="text-3xl md:text-4xl lg:text-5xl font-bold text-white font-serif mb-4">
+                className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white font-serif mb-4 break-words">
 
                 {currentAd.title}
               </motion.h2>

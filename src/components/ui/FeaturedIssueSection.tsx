@@ -52,10 +52,10 @@ export default function FeaturedIssueSection() {
               <span data-ev-id="ev_2b5999341e" className="font-medium">הגליון השבועי</span>
             </motion.div>
 
-            <h2 data-ev-id="ev_4bdc884a50" className="text-4xl md:text-5xl font-bold font-serif mb-4">
+            <h2 data-ev-id="ev_4bdc884a50" className="text-3xl sm:text-4xl md:text-5xl font-bold font-serif mb-4 break-words">
               <span data-ev-id="ev_2ec88a366c" className="text-secondary">גליון</span> #{latestIssue.issue_number}
             </h2>
-            <h3 data-ev-id="ev_00353a49b5" className="text-2xl md:text-3xl font-serif text-white/80 mb-6">
+            <h3 data-ev-id="ev_00353a49b5" className="text-xl sm:text-2xl md:text-3xl font-serif text-white/80 mb-6 break-words">
               {latestIssue.title}
             </h3>
 

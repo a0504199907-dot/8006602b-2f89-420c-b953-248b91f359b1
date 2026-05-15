@@ -55,7 +55,7 @@ export default function FeaturedHistoricalSection() {
               <span data-ev-id="ev_090e8cfd0f" className="font-medium">אירועים היסטוריים</span>
             </motion.div>
 
-            <h2 data-ev-id="ev_263ddd287f" className="text-3xl md:text-4xl font-bold font-serif mb-4 text-white">
+            <h2 data-ev-id="ev_263ddd287f" className="text-2xl sm:text-3xl md:text-4xl font-bold font-serif mb-4 text-white break-words">
               {featuredEvent.title}
             </h2>
             

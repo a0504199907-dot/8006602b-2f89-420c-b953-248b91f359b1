@@ -64,18 +64,18 @@ export default function GalleryDetail() {
 
   return (
     <Layout showSideAds={false}>
-      <div data-ev-id="ev_9c295b1255" className="container mx-auto px-4 py-8">
+      <div data-ev-id="ev_9c295b1255" className="container mx-auto px-4 py-6 sm:py-8">
         {/* Breadcrumbs */}
-        <div data-ev-id="ev_e751dad9ea" className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
+        <div data-ev-id="ev_e751dad9ea" className="flex items-center gap-2 text-sm text-muted-foreground mb-6 flex-wrap">
           <Link to="/" className="hover:text-secondary transition-colors">דף הבית</Link>
           <span data-ev-id="ev_e5d2db16d3">/</span>
           <Link to="/gallery" className="hover:text-secondary transition-colors">גלריות</Link>
           <span data-ev-id="ev_03dd6f1934">/</span>
-          <span data-ev-id="ev_88c420b205" className="text-foreground line-clamp-1">{album.title}</span>
+          <span data-ev-id="ev_88c420b205" className="text-foreground line-clamp-1 max-w-[200px] sm:max-w-none">{album.title}</span>
         </div>
 
         {/* Main Grid: Content + Sidebar */}
-        <div data-ev-id="ev_c82057a3bc" className="grid grid-cols-12 gap-8">
+        <div data-ev-id="ev_c82057a3bc" className="grid grid-cols-12 gap-4 sm:gap-8">
           {/* Content Area */}
           <div data-ev-id="ev_5fe3a91c8b" className="col-span-12 lg:col-span-8">
             {/* Header */}
@@ -89,7 +89,7 @@ export default function GalleryDetail() {
                   {album.chassidut}
                 </span>
               }
-              <h1 data-ev-id="ev_c1c51b8cba" className="text-3xl md:text-4xl font-bold text-foreground font-serif mb-4">
+              <h1 data-ev-id="ev_c1c51b8cba" className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground font-serif mb-4 break-words">
                 {album.title}
               </h1>
               <div data-ev-id="ev_b176c42509" className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground pb-4 border-b border-border">

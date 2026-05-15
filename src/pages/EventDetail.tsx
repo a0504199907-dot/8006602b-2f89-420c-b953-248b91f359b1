@@ -121,7 +121,7 @@ export default function EventDetail() {
                   }
                 </div>
 
-                <h1 data-ev-id="ev_fb1b7551e3" className="text-3xl md:text-4xl font-bold font-serif text-foreground mb-6">
+                <h1 data-ev-id="ev_fb1b7551e3" className="text-2xl sm:text-3xl md:text-4xl font-bold font-serif text-foreground mb-6 break-words">
                   {event.title}
                 </h1>
 
