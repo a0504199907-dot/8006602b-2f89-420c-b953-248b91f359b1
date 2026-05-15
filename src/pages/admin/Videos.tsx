@@ -201,7 +201,7 @@ export default function AdminVideos() {
   };
 
   const filteredVideos = videos.filter((v) =>
-  v.title.toLowerCase().includes(search.toLowerCase())
+  v?.title?.toLowerCase()?.includes(search.toLowerCase())
   );
 
   return (
