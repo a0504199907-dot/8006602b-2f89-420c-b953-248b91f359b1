@@ -92,8 +92,8 @@ export default function AdminWriters() {
 
   // Filter writers by search term
   const filteredWriters = writers.filter((w) =>
-  w.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  w.email && w.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  w?.name?.toLowerCase()?.includes(searchTerm.toLowerCase()) ||
+  w?.email && w?.email?.toLowerCase()?.includes(searchTerm.toLowerCase()) ||
   w.phone && w.phone.includes(searchTerm)
   );
 
