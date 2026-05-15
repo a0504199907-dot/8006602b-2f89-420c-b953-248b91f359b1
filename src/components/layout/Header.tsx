@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router';
 import { Menu, X, Calendar } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -24,6 +24,22 @@ export default function Header() {
   const { isScrolled } = useScrollPosition();
 
   const hebrewDate = 'ה׳ שבט תשפ״ה';
+
+  // Lock body scroll while the drawer is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = prev;
+      };
+    }
+  }, [mobileMenuOpen]);
+
+  // Close drawer on route change
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [location.pathname]);
 
   return (
     <header data-ev-id="ev_55b7b6dc80" className="sticky top-0 z-50">
@@ -103,47 +119,92 @@ export default function Header() {
         <div data-ev-id="ev_fbcd715f51" className="h-0.5 bg-gradient-to-r from-transparent via-secondary to-transparent" />
       </div>
 
-      {/* Mobile Navigation */}
+      {/* Mobile Navigation - Side Drawer (like Channel 14) */}
       <AnimatePresence>
         {mobileMenuOpen &&
-        <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: 'auto' }}
-          exit={{ opacity: 0, height: 0 }}
-          transition={{ duration: 0.25, ease: easings.outQuart }}
-          className="lg:hidden bg-primary/95 backdrop-blur-md border-t border-white/10 shadow-elevated overflow-hidden">
+        <>
+            {/* Backdrop covering the page content on the left */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              onClick={() => setMobileMenuOpen(false)}
+              className="lg:hidden fixed inset-0 bg-black/60 backdrop-blur-[2px] z-[60]"
+              aria-hidden="true" />
 
-            <nav data-ev-id="ev_8c1af12e92" className="container mx-auto px-4 py-4">
-              <motion.div
-              data-ev-id="ev_5921af1b5a"
-              className="flex flex-col gap-1"
-              variants={staggerContainer}
-              initial="hidden"
-              animate="visible">
-                {navItems.map((item, index) =>
-              <motion.div key={item.path} variants={staggerItem}>
-                <Link
-                  to={item.path}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`block px-4 py-3 rounded-xl text-base font-medium transition-colors duration-200 ease-[cubic-bezier(0.25,1,0.5,1)] active:scale-[0.98] ${
-                  location.pathname === item.path ?
-                  'bg-secondary text-primary' :
-                  'text-white/90 hover:bg-white/10'}`
-                  }>
 
-                      {item.label}
-                    </Link>
-              </motion.div>
-              )}
-              </motion.div>
+            {/* Close button - in the visible page area on the left */}
+            <motion.button
+              initial={{ opacity: 0, scale: 0.7 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.7 }}
+              transition={{ delay: 0.15, duration: 0.2 }}
+              onClick={() => setMobileMenuOpen(false)}
+              className="lg:hidden fixed top-3 left-3 z-[80] w-11 h-11 rounded-full bg-white text-primary flex items-center justify-center shadow-lg hover:bg-white/90 transition-colors"
+              aria-label="סגור תפריט">
 
-              {/* Hebrew Date in Mobile */}
-              <div data-ev-id="ev_dd64d3e710" className="flex items-center gap-2 text-white/60 mt-4 pt-4 border-t border-white/10 justify-center">
-                <Calendar className="w-4 h-4 text-secondary" />
-                <span data-ev-id="ev_b7dc8c9402" className="text-sm">{hebrewDate}</span>
+              <X className="w-6 h-6" />
+            </motion.button>
+
+            {/* Drawer - slides in from the right (RTL) */}
+            <motion.aside
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'tween', duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+              className="lg:hidden fixed top-0 right-0 bottom-0 w-[78%] max-w-[360px] bg-primary z-[70] flex flex-col shadow-2xl"
+              role="dialog"
+              aria-modal="true"
+              aria-label="תפריט ראשי">
+
+              {/* Drawer Header with logo */}
+              <div data-ev-id="ev_drawer_header" className="bg-primary-dark/40 border-b border-white/10 px-4 py-3 flex items-center justify-center shrink-0">
+                <img
+                  src={logoImage}
+                  alt="הציבור החרדי"
+                  className="h-14 w-auto object-contain" />
+
               </div>
-            </nav>
-          </motion.div>
+
+              {/* Gold accent line */}
+              <div data-ev-id="ev_drawer_accent" className="h-0.5 bg-gradient-to-r from-transparent via-secondary to-transparent" />
+
+              {/* Menu Items */}
+              <nav data-ev-id="ev_drawer_nav" className="flex-1 overflow-y-auto px-3 py-4">
+                <motion.div
+                  className="flex flex-col gap-1.5"
+                  variants={staggerContainer}
+                  initial="hidden"
+                  animate="visible">
+
+                  {navItems.map((item) =>
+                  <motion.div key={item.path} variants={staggerItem}>
+                      <Link
+                        to={item.path}
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={`block px-4 py-3.5 rounded-xl text-base font-medium transition-all duration-200 ease-[cubic-bezier(0.25,1,0.5,1)] active:scale-[0.98] ${
+                        location.pathname === item.path ?
+                        'bg-secondary text-primary shadow-gold font-bold' :
+                        'text-white/90 hover:bg-white/10 hover:text-secondary'}`
+                        }>
+
+                        {item.label}
+                      </Link>
+                    </motion.div>
+                  )}
+                </motion.div>
+              </nav>
+
+              {/* Footer with Hebrew Date */}
+              <div data-ev-id="ev_drawer_footer" className="border-t border-white/10 px-4 py-4 shrink-0 bg-primary-dark/30">
+                <div data-ev-id="ev_drawer_date" className="flex items-center gap-2 text-white/70 justify-center">
+                  <Calendar className="w-4 h-4 text-secondary" />
+                  <span data-ev-id="ev_drawer_date_text" className="text-sm font-medium">{hebrewDate}</span>
+                </div>
+              </div>
+            </motion.aside>
+          </>
         }
       </AnimatePresence>
     </header>);
