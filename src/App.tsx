@@ -8,6 +8,8 @@
 import { Routes, Route } from 'react-router';
 import ScrollToTop from '@/components/ui/ScrollToTop';
 import { useAnalytics } from '@/hooks/useAnalytics';
+import { useMobileMenu } from '@/contexts/MobileMenuContext';
+import MobileMenuDrawer from '@/components/layout/MobileMenuDrawer';
 import Index from '@/pages/Index';
 import NewsPage from '@/pages/NewsPage';
 import GalleryPage from '@/pages/GalleryPage';
@@ -78,14 +80,24 @@ import UpdatePrompt from '@/components/ui/UpdatePrompt';
 export default function App() {
   // Enable analytics tracking
   useAnalytics();
-  
+
+  const { isOpen: mobileMenuOpen } = useMobileMenu();
+
   return (
     <>
-      <ScrollToTop />
-      <OfflineIndicator />
-      <InstallPWA variant="floating" />
-      <UpdatePrompt />
-      <Routes>
+      {/* Page-content wrapper. When the mobile drawer opens, this slides LEFT
+          to reveal the drawer (fixed on the right edge). Desktop is unaffected. */}
+      <div
+        className={`transition-transform duration-[320ms] ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform lg:translate-x-0 ${
+        mobileMenuOpen ?
+        '-translate-x-[78%] sm:-translate-x-[360px]' :
+        'translate-x-0'}`
+        }>
+        <ScrollToTop />
+        <OfflineIndicator />
+        <InstallPWA variant="floating" />
+        <UpdatePrompt />
+        <Routes>
         {/* Public Routes */}
         <Route path="/" element={<Index />} />
         <Route path="/news" element={<NewsPage />} />
@@ -160,6 +172,11 @@ export default function App() {
         {/* 404 - Catch All */}
         <Route path="*" element={<NotFound />} />
       </Routes>
+      </div>
+
+      {/* Mobile menu drawer — rendered OUTSIDE the transforming wrapper so it
+          stays fixed to the right edge while the page slides left. */}
+      <MobileMenuDrawer />
     </>
   );
 }

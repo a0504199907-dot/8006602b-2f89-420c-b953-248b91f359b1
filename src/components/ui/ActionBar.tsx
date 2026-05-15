@@ -3,7 +3,6 @@ import {
   Volume2,
   VolumeX,
   Heart,
-  Facebook,
   Share2,
   Link as LinkIcon,
   Printer } from
@@ -43,9 +42,6 @@ export default function ActionBar({ title, content, className = '' }: ActionBarP
     const url = window.location.href;
 
     switch (platform) {
-      case 'facebook':
-        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
-        break;
       case 'whatsapp':
         window.open(`https://wa.me/?text=${encodeURIComponent(title + ' ' + url)}`, '_blank');
         break;
@@ -92,15 +88,6 @@ export default function ActionBar({ title, content, className = '' }: ActionBarP
 
         <Heart className={`w-4 h-4 ${isSaved ? 'fill-current' : ''}`} />
         שמור
-      </button>
-
-      {/* פייסבוק */}
-      <button data-ev-id="ev_5eedfe7656"
-      onClick={() => handleShare('facebook')}
-      className="p-2 bg-muted hover:bg-muted/80 rounded-xl transition-colors"
-      title="שתף בפייסבוק">
-
-        <Facebook className="w-4 h-4" />
       </button>
 
       {/* וואטסאפ */}
