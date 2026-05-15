@@ -242,6 +242,6 @@ export default defineConfig(() => {
 			dedupe: ['react', 'react-dom', 'react-router'],
 		},
 		plugins: [injectDevToolsPlugin(), tailwindcss(), tailwindDevPlugin(), structuredLoggerPlugin(), react(), viteCustomErrorOverlay()],
-		build: { assetsInlineLimit: 100000 },
+		build: { assetsInlineLimit: 100000, target: 'esnext' },
 	};
 });
