@@ -10,7 +10,7 @@ import {
   Plus,
   Search,
   Edit,
-  Trash2,
+  Trash2
   Calendar,
   MapPin,
   Clock,
@@ -219,7 +219,7 @@ export default function AdminEvents() {
   };
 
   const filteredEvents = events.filter((e) =>
-  e.title.toLowerCase().includes(search.toLowerCase())
+  e?.title?.toLowerCase()?.includes(search.toLowerCase())
   );
 
   return (
