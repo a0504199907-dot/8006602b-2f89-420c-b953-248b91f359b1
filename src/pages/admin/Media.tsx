@@ -259,7 +259,7 @@ export default function AdminMedia() {
 
   // Filter images by search
   const filteredImages = images.filter((img) =>
-  img.title.toLowerCase().includes(searchQuery.toLowerCase())
+  img?.title?.toLowerCase()?.includes(searchQuery.toLowerCase())
   );
 
   // Toggle image selection
