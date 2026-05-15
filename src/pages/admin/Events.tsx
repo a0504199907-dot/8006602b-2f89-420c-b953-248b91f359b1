@@ -10,7 +10,7 @@ import {
   Plus,
   Search,
   Edit,
-  Trash2
+  Trash2,
   Calendar,
   MapPin,
   Clock,
