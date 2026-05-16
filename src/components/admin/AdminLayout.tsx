@@ -40,7 +40,6 @@ interface AdminLayoutProps {
 
 const navItems = [
   { path: '/admin', label: 'דשבורד', icon: LayoutDashboard },
-  { path: '/admin/hero-banners', label: 'באנרים ראשיים', icon: Presentation },
   { path: '/admin/drive-sync', label: 'סנכרון Drive', icon: Cloud },
   { path: '/admin/media', label: 'מדיה', icon: ImagePlus },
   { path: '/admin/newspaper', label: 'גיליונות העיתון', icon: Newspaper },
@@ -49,11 +48,9 @@ const navItems = [
   { path: '/admin/bein-hatzibur', label: 'בעין הציבור', icon: Eye },
   { path: '/admin/news-batzibur', label: 'נייעס בציבור', icon: Newspaper },
   { path: '/admin/historical', label: 'אירועים היסטוריים', icon: History },
-  { path: '/admin/articles', label: 'כתבות', icon: FileText },
   { path: '/admin/galleries', label: 'גלריות', icon: ImageIcon },
   { path: '/admin/events', label: 'אירועים', icon: Calendar },
   { path: '/admin/videos', label: 'סרטונים', icon: Video },
-  { path: '/admin/writers', label: 'כתבים', icon: UserPen },
   { path: '/admin/data', label: 'צלמים וחסידויות', icon: Database },
   { path: '/admin/ads', label: 'פרסומות', icon: Megaphone },
   { path: '/admin/analytics', label: 'אנליטיקס', icon: BarChart3 },
@@ -61,7 +58,6 @@ const navItems = [
   { path: '/admin/comments', label: 'תגובות והצבעות', icon: MessageCircle },
   { path: '/admin/site-pages', label: 'דפי מידע', icon: FileEdit },
   { path: '/admin/watermark', label: 'סימן מים', icon: Droplets },
-  { path: '/admin/export', label: 'ייצוא קוד', icon: Download },
   { path: '/admin/newsletter', label: 'ניוזלטר', icon: Mail },
   { path: '/admin/users', label: 'משתמשים', icon: Users },
   { path: '/admin/settings', label: 'הגדרות', icon: Settings }
