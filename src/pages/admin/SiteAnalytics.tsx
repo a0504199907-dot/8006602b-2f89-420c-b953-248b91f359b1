@@ -673,7 +673,7 @@ export default function SiteAnalytics() {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <a href="https://analytics.google.com/analytics/web/" target="_blank" rel="noopener noreferrer" className="bg-zinc-900 border border-zinc-800 hover:border-amber-500/50 rounded-xl p-5 flex items-center gap-4 transition-all group">
+                  <a href="https://analytics.google.com/analytics/web/#/a389447245p538081850/reports/intelligenthome" target="_blank" rel="noopener noreferrer" className="bg-zinc-900 border border-zinc-800 hover:border-amber-500/50 rounded-xl p-5 flex items-center gap-4 transition-all group">
                     <div className="w-12 h-12 bg-amber-500/10 rounded-xl flex items-center justify-center group-hover:bg-amber-500/20 transition-colors">
                       <BarChart3 className="w-6 h-6 text-amber-400" />
                     </div>
@@ -684,7 +684,7 @@ export default function SiteAnalytics() {
                     <ExternalLink className="w-4 h-4 text-zinc-500 mr-auto group-hover:text-amber-400 transition-colors" />
                   </a>
 
-                  <a href="https://analytics.google.com/analytics/web/#/realtime" target="_blank" rel="noopener noreferrer" className="bg-zinc-900 border border-zinc-800 hover:border-amber-500/50 rounded-xl p-5 flex items-center gap-4 transition-all group">
+                  <a href="https://analytics.google.com/analytics/web/#/a389447245p538081850/realtime/overview" target="_blank" rel="noopener noreferrer" className="bg-zinc-900 border border-zinc-800 hover:border-amber-500/50 rounded-xl p-5 flex items-center gap-4 transition-all group">
                     <div className="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center group-hover:bg-blue-500/20 transition-colors">
                       <Activity className="w-6 h-6 text-blue-400" />
                     </div>
@@ -695,7 +695,7 @@ export default function SiteAnalytics() {
                     <ExternalLink className="w-4 h-4 text-zinc-500 mr-auto group-hover:text-amber-400 transition-colors" />
                   </a>
 
-                  <a href="https://analytics.google.com/analytics/web/" target="_blank" rel="noopener noreferrer" className="bg-zinc-900 border border-zinc-800 hover:border-amber-500/50 rounded-xl p-5 flex items-center gap-4 transition-all group">
+                  <a href="https://analytics.google.com/analytics/web/#/a389447245p538081850/reports/intelligenthome" target="_blank" rel="noopener noreferrer" className="bg-zinc-900 border border-zinc-800 hover:border-amber-500/50 rounded-xl p-5 flex items-center gap-4 transition-all group">
                     <div className="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center group-hover:bg-green-500/20 transition-colors">
                       <Users className="w-6 h-6 text-green-400" />
                     </div>
@@ -706,7 +706,7 @@ export default function SiteAnalytics() {
                     <ExternalLink className="w-4 h-4 text-zinc-500 mr-auto group-hover:text-amber-400 transition-colors" />
                   </a>
 
-                  <a href="https://analytics.google.com/analytics/web/" target="_blank" rel="noopener noreferrer" className="bg-zinc-900 border border-zinc-800 hover:border-amber-500/50 rounded-xl p-5 flex items-center gap-4 transition-all group">
+                  <a href="https://analytics.google.com/analytics/web/#/a389447245p538081850/reports/intelligenthome" target="_blank" rel="noopener noreferrer" className="bg-zinc-900 border border-zinc-800 hover:border-amber-500/50 rounded-xl p-5 flex items-center gap-4 transition-all group">
                     <div className="w-12 h-12 bg-purple-500/10 rounded-xl flex items-center justify-center group-hover:bg-purple-500/20 transition-colors">
                       <TrendingUp className="w-6 h-6 text-purple-400" />
                     </div>
