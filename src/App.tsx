@@ -86,12 +86,17 @@ export default function App() {
   return (
     <>
       {/* Page-content wrapper. When the mobile drawer opens, this slides LEFT
-          to reveal the drawer (fixed on the right edge). Desktop is unaffected. */}
+          to reveal the drawer (fixed on the right edge). Desktop is unaffected.
+          IMPORTANT: when the menu is CLOSED we deliberately add NO transform /
+          will-change-transform classes — they would create a containing block
+          for `position: fixed` descendants and break every modal in the app
+          (PDF viewer, lightbox, search, etc.) by sizing them to the page
+          instead of the viewport. */}
       <div
-        className={`transition-transform duration-[320ms] ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform lg:translate-x-0 ${
+        className={
         mobileMenuOpen ?
-        '-translate-x-[78%] sm:-translate-x-[360px]' :
-        'translate-x-0'}`
+        'transition-transform duration-[320ms] ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform -translate-x-[78%] sm:-translate-x-[360px] lg:translate-x-0' :
+        'transition-transform duration-[320ms] ease-[cubic-bezier(0.22,1,0.36,1)]'
         }>
         <ScrollToTop />
         <OfflineIndicator />
