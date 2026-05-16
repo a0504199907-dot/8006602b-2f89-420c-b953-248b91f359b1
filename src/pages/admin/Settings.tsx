@@ -13,13 +13,15 @@ import {
   Users,
   Loader2,
   Check,
+  EyeOff,
   Upload } from
 'lucide-react';
 
 export default function AdminSettings() {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
-  const [saved, setSaved] = useState(false);
+
+  const [noIndexEnabled, setNoIndexEnabled] = useState<boolean>(true);  const [saved, setSaved] = useState(false);
   const [activeSection, setActiveSection] = useState('general');
 
   const [settings, setSettings] = useState({
@@ -85,6 +87,18 @@ export default function AdminSettings() {
   { id: 'security', icon: Shield, label: 'אבטחה' },
   { id: 'users', icon: Users, label: 'משתמשים' }];
 
+
+  const toggleIndexing = async () => {
+    const newValue = !noIndexEnabled;
+    setNoIndexEnabled(newValue);
+    // Update meta robots tag in document
+    const robotsMeta = document.getElementById('robots-meta');
+    if (robotsMeta) {
+      robotsMeta.setAttribute('content', newValue ? 'noindex, nofollow' : 'index, follow');
+    }
+    // Save to supabase site_settings
+    await supabase.from('site_settings' as any).upsert({ key: 'noindex', value: String(newValue) });
+  };
 
   return (
     <AdminLayout>
@@ -358,6 +372,35 @@ export default function AdminSettings() {
           </div>
         </div>
       </div>
-    </AdminLayout>);
+    
+          {/* SEO Section */}
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
+            <h2 className="text-lg font-bold text-foreground flex items-center gap-2 mb-6">
+              <EyeOff className="w-5 h-5 text-secondary" />
+              SEO ומנועי חיפוש
+            </h2>
+            <div className="flex items-center justify-between p-4 bg-zinc-800 rounded-xl">
+              <div>
+                <p className="text-white font-medium">הסתרה ממנועי חיפוש</p>
+                <p className="text-zinc-400 text-sm mt-1">
+                  {noIndexEnabled
+                    ? 'האתר מוסתר מגוגל ומנועי חיפוש אחרים (noindex פעיל)'
+                    : 'האתר גלוי לגוגל ומנועי חיפוש'}
+                </p>
+              </div>
+              <button
+                onClick={toggleIndexing}
+                className={`relative inline-flex h-7 w-14 items-center rounded-full transition-colors focus:outline-none ${noIndexEnabled ? 'bg-red-500' : 'bg-green-500'}`}
+              >
+                <span className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${noIndexEnabled ? 'translate-x-1' : 'translate-x-8'}`} />
+              </button>
+            </div>
+            <p className="text-zinc-500 text-xs mt-3">
+              {noIndexEnabled
+                ? '🔴 כרגע: גוגל לא יוכל לאנדקס את האתר'
+                : '🟢 כרגע: גוגל יכול לאנדקס את האתר'}
+            </p>
+          </motion.div>
+</AdminLayout>);
 
 }
