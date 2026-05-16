@@ -25,10 +25,10 @@ export default function Layout({ children, showTicker = true, showSideAds = true
       {/* Fixed Side Ad Overlays */}
       {showSideAds && (
         <>
-          <div className="hidden xl:flex fixed left-0 top-1/2 -translate-y-1/2 w-[180px] px-2 z-40 items-center justify-center">
+          <div className="hidden xl:flex fixed left-0 top-[151px] h-[calc(100vh-151px)] w-[180px] px-2 z-40 items-center justify-center overflow-hidden">
             <FloatingAd pageType={pageType} side="left" section={section} articleId={articleId} />
           </div>
-          <div className="hidden xl:flex fixed right-0 top-1/2 -translate-y-1/2 w-[180px] px-2 z-40 items-center justify-center">
+          <div className="hidden xl:flex fixed right-0 top-[151px] h-[calc(100vh-151px)] w-[180px] px-2 z-40 items-center justify-center overflow-hidden">
             <FloatingAd pageType={pageType} side="right" section={section} articleId={articleId} />
           </div>
         </>
