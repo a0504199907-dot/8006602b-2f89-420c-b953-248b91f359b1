@@ -3,6 +3,7 @@ import Layout from '@/components/layout/Layout';
 import { useEvents } from '@/hooks/useEvents';
 import PageAds from '@/components/ui/PageAds';
 import ActionBar from '@/components/ui/ActionBar';
+import TextToSpeechPlayer from '@/components/ui/TextToSpeechPlayer';
 import { ChevronLeft, Calendar, Clock, MapPin, Users, Loader2, ExternalLink } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -132,11 +133,18 @@ export default function EventDetail() {
                 }
 
                 {/* Action Bar */}
-                <ActionBar 
-                  title={event.title} 
+                <ActionBar
+                  title={event.title}
                   content={event.description || ''}
                   className="pt-4 border-t border-border"
                 />
+
+                {/* Text to Speech Player */}
+                {event.description &&
+                <div data-ev-id="ev_event_tts" className="mt-4">
+                    <TextToSpeechPlayer text={event.description} title={event.title} />
+                  </div>
+                }
               </motion.div>
             </div>
 

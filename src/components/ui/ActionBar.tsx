@@ -1,7 +1,5 @@
 import { useState } from 'react';
 import {
-  Volume2,
-  VolumeX,
   Heart,
   Share2,
   Link as LinkIcon,
@@ -9,34 +7,17 @@ import {
 'lucide-react';
 
 interface ActionBarProps {
-  title: string;
+  title?: string;
   content?: string;
   className?: string;
 }
 
 /**
  * סרגל פעולות משותף לכל דפי הכתבות
- * כולל: האזן, שמור, פייסבוק, וואטסאפ, העתק קישור, הדפסה
+ * כולל: שמור, שתף בוואטסאפ, העתק קישור, הדפסה
  */
-export default function ActionBar({ title, content, className = '' }: ActionBarProps) {
-  const [isPlaying, setIsPlaying] = useState(false);
+export default function ActionBar({ title = '', className = '' }: ActionBarProps) {
   const [isSaved, setIsSaved] = useState(false);
-
-  const toggleAudio = () => {
-    if (isPlaying) {
-      window.speechSynthesis.cancel();
-      setIsPlaying(false);
-    } else {
-      const text = content?.replace(/<[^>]*>/g, '') || title;
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'he-IL';
-      utterance.rate = 0.9;
-      utterance.onend = () => setIsPlaying(false);
-      utterance.onerror = () => setIsPlaying(false);
-      window.speechSynthesis.speak(utterance);
-      setIsPlaying(true);
-    }
-  };
 
   const handleShare = (platform: string) => {
     const url = window.location.href;
@@ -45,7 +26,7 @@ export default function ActionBar({ title, content, className = '' }: ActionBarP
       case 'whatsapp':
         window.open(`https://wa.me/?text=${encodeURIComponent(title + ' ' + url)}`, '_blank');
         break;
-      case 'copy':
+      case 'copy': {
         const textarea = document.createElement('textarea');
         textarea.value = url;
         textarea.style.position = 'fixed';
@@ -56,6 +37,7 @@ export default function ActionBar({ title, content, className = '' }: ActionBarP
         document.body.removeChild(textarea);
         alert('הקישור הועתק!');
         break;
+      }
       case 'print':
         window.print();
         break;
@@ -64,19 +46,6 @@ export default function ActionBar({ title, content, className = '' }: ActionBarP
 
   return (
     <div data-ev-id="ev_0e8e628f12" className={`flex flex-wrap items-center gap-3 ${className}`}>
-      {/* האזן */}
-      <button data-ev-id="ev_94a523b5c7"
-      onClick={toggleAudio}
-      className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-colors ${
-      isPlaying ?
-      'bg-secondary text-primary' :
-      'bg-muted hover:bg-muted/80 text-foreground'}`
-      }>
-
-        {isPlaying ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-        {isPlaying ? 'עצור' : 'האזן'}
-      </button>
-
       {/* שמור */}
       <button data-ev-id="ev_f4855f1d83"
       onClick={() => setIsSaved(!isSaved)}

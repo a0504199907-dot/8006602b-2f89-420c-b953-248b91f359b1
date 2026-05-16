@@ -3,6 +3,7 @@ import { useState } from 'react';
 import Layout from '@/components/layout/Layout';
 import PageAds from '@/components/ui/PageAds';
 import ActionBar from '@/components/ui/ActionBar';
+import TextToSpeechPlayer from '@/components/ui/TextToSpeechPlayer';
 import { useArticle, useArticles, ContentBlock } from '@/hooks/useArticles';
 import { Clock, User, Eye, ChevronLeft, Loader2, Camera } from 'lucide-react';
 import TextSizeSelector, { TextSize, getTextSizeClass } from '@/components/ui/TextSizeSelector';
@@ -137,11 +138,6 @@ export default function ArticleDetail() {
 
   }
 
-  // DEBUG INFO
-  const blocks = article.contentBlocks || [];
-  const imageBlocks = blocks.filter((b) => b.type === 'image');
-  const debugInfo = `BLOCKS: ${blocks.length} | IMAGES: ${imageBlocks.length} | IMG URL LEN: ${imageBlocks[0]?.imageUrl?.length || 0}`;
-
   // Related articles
   const relatedArticles = relatedFromDb.filter((a) => a.id !== article.id).slice(0, 3);
 
@@ -163,13 +159,6 @@ export default function ArticleDetail() {
 
   return (
     <Layout>
-      {/* DEBUG BAR - TOP OF PAGE */}
-      <div data-ev-id="ev_595e8b261c" style={{ background: 'red', color: 'white', padding: '20px', fontSize: '24px', fontWeight: 'bold', textAlign: 'center', position: 'fixed', top: 0, left: 0, right: 0, zIndex: 9999 }}>
-        {debugInfo}
-      </div>
-      
-      <ActionBar />
-
       <section data-ev-id="ev_c8c0a33621" className="py-10 bg-background">
         <div data-ev-id="ev_5d02702691" className="container mx-auto px-4">
           <div data-ev-id="ev_03a3c21306" className="grid grid-cols-1 lg:grid-cols-3 gap-10">
@@ -229,6 +218,16 @@ export default function ArticleDetail() {
                 <div data-ev-id="ev_9d5a2eaf07" className="mt-4">
                   <TextSizeSelector onSizeChange={setTextSize} />
                 </div>
+
+                {/* Text to Speech Player */}
+                {(article.excerpt || article.content) &&
+                <div data-ev-id="ev_article_tts" className="mt-4">
+                    <TextToSpeechPlayer
+                    text={`${article.excerpt || ''} ${article.content || ''}`}
+                    title={article.title} />
+
+                  </div>
+                }
               </header>
 
               {/* Featured Image */}
