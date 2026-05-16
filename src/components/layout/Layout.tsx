@@ -23,7 +23,7 @@ export default function Layout({ children, showTicker = true, showSideAds = true
       {showTicker && <NewsTicker />}
       
       {/* Content with side ads */}
-      <div data-ev-id="ev_99f5f9e784" className="flex">
+      <div data-ev-id="ev_99f5f9e784" className="flex items-start">
         {/* Left Ad Column */}
         {showSideAds &&
         <div data-ev-id="ev_7d69ab93a5" className="hidden xl:block w-[180px] shrink-0 px-2 pt-4 sticky top-20 self-start">
