@@ -6,46 +6,83 @@ interface TextToSpeechPlayerProps {
   title?: string;
 }
 
-// Known female Hebrew voice names to avoid (prefer male).
-const FEMALE_HE_VOICE_PATTERNS = [
+// Known female voice names to avoid.
+const FEMALE_VOICE_PATTERNS = [
   'carmit',
+  'hila',
   'female',
   'אישה',
   'נקבה',
-  'woman'];
+  'woman',
+  'samantha',
+  'victoria',
+  'allison',
+  'susan',
+  'karen',
+  'tessa',
+  'fiona',
+  'moira',
+  'kate',
+  'serena',
+  'zira',
+  'eva',
+  'zuzana'];
 
 
-// Known/likely male Hebrew voice names to prefer.
-const MALE_HE_VOICE_PATTERNS = [
+// Known/likely male Hebrew/general voice names to prefer.
+const MALE_VOICE_PATTERNS = [
   'asaf',
+  'avri',
   'male',
   'גבר',
   'זכר',
   'man',
   'david',
-  'daniel'];
+  'daniel',
+  'mark',
+  'alex',
+  'fred',
+  'tom',
+  'george',
+  'james',
+  'aaron'];
 
 
-function pickHebrewMaleVoice(voices: SpeechSynthesisVoice[]): SpeechSynthesisVoice | null {
+function isLikelyFemaleName(name: string): boolean {
+  const lower = (name || '').toLowerCase();
+  return FEMALE_VOICE_PATTERNS.some((p) => lower.includes(p));
+}
+
+function isLikelyMaleName(name: string): boolean {
+  const lower = (name || '').toLowerCase();
+  return MALE_VOICE_PATTERNS.some((p) => lower.includes(p));
+}
+
+type VoiceSelection = {
+  voice: SpeechSynthesisVoice | null;
+  needsPitchShift: boolean; // true if voice is likely female -> we must lower pitch
+};
+
+function pickBestMaleHebrewVoice(voices: SpeechSynthesisVoice[]): VoiceSelection {
   const hebrewVoices = voices.filter((v) => v.lang?.toLowerCase().startsWith('he'));
-  if (hebrewVoices.length === 0) return null;
-
-  const lower = (s: string) => (s || '').toLowerCase();
 
   // 1) Hebrew voice that explicitly looks male
-  const explicitMale = hebrewVoices.find((v) =>
-  MALE_HE_VOICE_PATTERNS.some((p) => lower(v.name).includes(p))
-  );
-  if (explicitMale) return explicitMale;
+  const explicitHeMale = hebrewVoices.find((v) => isLikelyMaleName(v.name));
+  if (explicitHeMale) return { voice: explicitHeMale, needsPitchShift: false };
 
   // 2) Hebrew voice that is NOT a known female voice
-  const notFemale = hebrewVoices.find((v) =>
-  !FEMALE_HE_VOICE_PATTERNS.some((p) => lower(v.name).includes(p))
-  );
-  if (notFemale) return notFemale;
+  const heNotFemale = hebrewVoices.find((v) => !isLikelyFemaleName(v.name));
+  if (heNotFemale) return { voice: heNotFemale, needsPitchShift: false };
 
-  // 3) Fallback: any Hebrew voice
-  return hebrewVoices[0] || null;
+  // 3) Hebrew voice exists but only female — keep it for correct Hebrew pronunciation,
+  //    but flag for aggressive pitch-shift to sound masculine.
+  if (hebrewVoices[0]) return { voice: hebrewVoices[0], needsPitchShift: true };
+
+  // 4) No Hebrew voice at all — fall back to any voice; default settings will be used.
+  const anyMale = voices.find((v) => isLikelyMaleName(v.name));
+  if (anyMale) return { voice: anyMale, needsPitchShift: false };
+
+  return { voice: null, needsPitchShift: true };
 }
 
 export default function TextToSpeechPlayer({ text }: TextToSpeechPlayerProps) {
@@ -55,7 +92,7 @@ export default function TextToSpeechPlayer({ text }: TextToSpeechPlayerProps) {
   const [playbackRate, setPlaybackRate] = useState(1);
   const [showSpeedMenu, setShowSpeedMenu] = useState(false);
   const [isSupported, setIsSupported] = useState(true);
-  const [selectedVoice, setSelectedVoice] = useState<SpeechSynthesisVoice | null>(null);
+  const [voiceSelection, setVoiceSelection] = useState<VoiceSelection>({ voice: null, needsPitchShift: true });
 
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -84,7 +121,7 @@ export default function TextToSpeechPlayer({ text }: TextToSpeechPlayerProps) {
     const loadVoices = () => {
       const voices = window.speechSynthesis.getVoices();
       if (voices.length > 0) {
-        setSelectedVoice(pickHebrewMaleVoice(voices));
+        setVoiceSelection(pickBestMaleHebrewVoice(voices));
       }
     };
 
@@ -124,15 +161,27 @@ export default function TextToSpeechPlayer({ text }: TextToSpeechPlayerProps) {
 
     const utterance = new SpeechSynthesisUtterance(textToSpeak);
     utterance.lang = 'he-IL';
-    utterance.rate = playbackRate;
-    utterance.pitch = 0.95; // slightly lower pitch — feels more masculine/natural
     utterance.volume = 1;
 
-    if (selectedVoice) {
-      utterance.voice = selectedVoice;
+    // Resolve voice now in case it was not ready on mount
+    const resolved = voiceSelection.voice ?
+    voiceSelection :
+    pickBestMaleHebrewVoice(window.speechSynthesis.getVoices());
+
+    if (resolved.voice) {
+      utterance.voice = resolved.voice;
+    }
+
+    // GUARANTEE a male-sounding result:
+    // - If voice is already male: keep pitch close to normal, just a tad lower for warmth.
+    // - If only a female voice is available: push pitch well below 1.0 so the timbre
+    //   reads as masculine. Web Speech pitch range is 0..2 (default 1).
+    if (resolved.needsPitchShift) {
+      utterance.pitch = 0.55;
+      utterance.rate = playbackRate * 0.95;
     } else {
-      const voice = pickHebrewMaleVoice(window.speechSynthesis.getVoices());
-      if (voice) utterance.voice = voice;
+      utterance.pitch = 0.9;
+      utterance.rate = playbackRate;
     }
 
     utterance.onstart = () => {
@@ -161,7 +210,7 @@ export default function TextToSpeechPlayer({ text }: TextToSpeechPlayerProps) {
 
     utteranceRef.current = utterance;
     window.speechSynthesis.speak(utterance);
-  }, [cleanText, estimatedDuration, playbackRate, selectedVoice, stopSpeech]);
+  }, [cleanText, estimatedDuration, playbackRate, voiceSelection, stopSpeech]);
 
   const togglePlay = () => {
     if (isPlaying) {
