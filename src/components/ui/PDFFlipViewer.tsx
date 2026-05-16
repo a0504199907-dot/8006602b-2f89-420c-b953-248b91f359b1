@@ -326,7 +326,7 @@ export default function PDFFlipViewer(props: PDFFlipViewerProps) {
             HTMLFlipBook trying to lay out pages before they exist. */}
         {!isLoading && !error && pages.length > 0 &&
         <div
-          className="transition-transform duration-200"
+          className="relative transition-transform duration-200"
           style={{ transform: `scale(${scale})` }}>
 
             <HTMLFlipBook
@@ -376,33 +376,87 @@ export default function PDFFlipViewer(props: PDFFlipViewerProps) {
             </HTMLFlipBook>
           </div>
         }
+
+        {/* Floating side arrows — overlay over the pages so taps on the
+            edges of the screen flip pages. Hidden during loading/error. */}
+        {!isLoading && !error && pages.length > 0 &&
+        <>
+            {/* Right arrow (RTL = previous page) */}
+            <button
+              onClick={goToPrev}
+              disabled={currentPage <= 0}
+              aria-label="עמוד קודם"
+              className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-black/55 hover:bg-secondary hover:text-primary text-white backdrop-blur-sm shadow-xl flex items-center justify-center transition-all disabled:opacity-25 disabled:cursor-not-allowed active:scale-90">
+
+              <ChevronRight className="w-6 h-6 sm:w-8 sm:h-8" strokeWidth={2.5} />
+            </button>
+
+            {/* Left arrow (RTL = next page) */}
+            <button
+              onClick={goToNext}
+              disabled={currentPage + pagesAcross >= pages.length}
+              aria-label="עמוד הבא"
+              className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-black/55 hover:bg-secondary hover:text-primary text-white backdrop-blur-sm shadow-xl flex items-center justify-center transition-all disabled:opacity-25 disabled:cursor-not-allowed active:scale-90">
+
+              <ChevronLeft className="w-6 h-6 sm:w-8 sm:h-8" strokeWidth={2.5} />
+            </button>
+          </>
+        }
       </div>
 
-      {/* Footer / pagination */}
-      <div data-ev-id="ev_pdf_footer" className="bg-primary/95 backdrop-blur-sm text-white px-3 sm:px-4 py-2 sm:py-3 flex items-center justify-between gap-2 shrink-0">
-        <button
-          onClick={goToNext}
-          disabled={!pages.length || currentPage + pagesAcross >= pages.length}
-          className="flex items-center gap-1.5 bg-secondary hover:bg-secondary-light text-primary px-3 sm:px-5 py-2 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed transition-colors font-medium text-sm sm:text-base">
+      {/* Footer / pagination — large arrow buttons + page scrubber */}
+      <div data-ev-id="ev_pdf_footer" className="bg-primary/95 backdrop-blur-sm text-white shrink-0">
+        <div data-ev-id="ev_pdf_footer_row" className="px-3 sm:px-4 py-2.5 sm:py-3 flex items-center justify-between gap-2 sm:gap-3">
+          {/* Previous (RTL = right arrow in footer too) */}
+          <button
+            onClick={goToPrev}
+            disabled={!pages.length || currentPage <= 0}
+            aria-label="עמוד קודם"
+            className="flex items-center justify-center gap-1.5 bg-secondary hover:bg-secondary-light text-primary w-12 h-12 sm:w-auto sm:h-auto sm:px-5 sm:py-2.5 rounded-full sm:rounded-xl disabled:opacity-30 disabled:cursor-not-allowed transition-all active:scale-95 font-medium text-sm sm:text-base shadow-lg shrink-0">
 
-          <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
-          <span className="hidden sm:inline">הקודם</span>
-        </button>
+            <ChevronRight className="w-6 h-6 sm:w-5 sm:h-5" strokeWidth={2.5} />
+            <span className="hidden sm:inline">הקודם</span>
+          </button>
 
-        <div data-ev-id="ev_pdf_counter" className="flex items-center gap-2 bg-white/10 rounded-lg px-3 py-1.5 text-sm">
-          <span className="text-white/70">עמוד</span>
-          <span className="font-bold text-secondary">{visiblePageLabel}</span>
-          <span className="text-white/50">/ {pages.length || '…'}</span>
+          {/* Center: page counter (mobile shows compact, desktop shows label) */}
+          <div data-ev-id="ev_pdf_counter" className="flex items-center gap-1.5 bg-white/10 rounded-full px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base shrink min-w-0">
+            <span className="text-white/70 hidden sm:inline">עמוד</span>
+            <span className="font-bold text-secondary tabular-nums">{visiblePageLabel}</span>
+            <span className="text-white/50">/</span>
+            <span className="text-white/70 tabular-nums">{pages.length || '…'}</span>
+          </div>
+
+          {/* Next (RTL = left arrow) */}
+          <button
+            onClick={goToNext}
+            disabled={!pages.length || currentPage + pagesAcross >= pages.length}
+            aria-label="עמוד הבא"
+            className="flex items-center justify-center gap-1.5 bg-secondary hover:bg-secondary-light text-primary w-12 h-12 sm:w-auto sm:h-auto sm:px-5 sm:py-2.5 rounded-full sm:rounded-xl disabled:opacity-30 disabled:cursor-not-allowed transition-all active:scale-95 font-medium text-sm sm:text-base shadow-lg shrink-0">
+
+            <span className="hidden sm:inline">הבא</span>
+            <ChevronLeft className="w-6 h-6 sm:w-5 sm:h-5" strokeWidth={2.5} />
+          </button>
         </div>
 
-        <button
-          onClick={goToPrev}
-          disabled={!pages.length || currentPage <= 0}
-          className="flex items-center gap-1.5 bg-secondary hover:bg-secondary-light text-primary px-3 sm:px-5 py-2 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed transition-colors font-medium text-sm sm:text-base">
+        {/* Page scrubber — drag to jump to any page. Shown when there are
+            enough pages to make it worthwhile. */}
+        {pages.length > 2 &&
+        <div data-ev-id="ev_pdf_scrubber" className="px-4 sm:px-6 pb-3">
+            <input
+              type="range"
+              min={0}
+              max={pages.length - 1}
+              value={currentPage}
+              onChange={(e) => {
+                const target = Number(e.target.value);
+                flipBookRef.current?.pageFlip()?.turnToPage(target);
+              }}
+              aria-label="קפיצה לעמוד"
+              className="w-full h-1 bg-white/15 rounded-full appearance-none cursor-pointer accent-secondary"
+              style={{ direction: 'rtl' }} />
 
-          <span className="hidden sm:inline">הבא</span>
-          <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
-        </button>
+          </div>
+        }
       </div>
     </motion.div>);
 
