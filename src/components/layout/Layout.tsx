@@ -26,7 +26,7 @@ export default function Layout({ children, showTicker = true, showSideAds = true
       <div data-ev-id="ev_99f5f9e784" className="flex">
         {/* Left Ad Column */}
         {showSideAds &&
-        <div data-ev-id="ev_7d69ab93a5" className="hidden xl:block w-[180px] shrink-0 px-2 pt-4">
+        <div data-ev-id="ev_7d69ab93a5" className="hidden xl:block w-[180px] shrink-0 px-2 pt-4 sticky top-20 self-start">
             <FloatingAd pageType={pageType} side="left" section={section} articleId={articleId} />
           </div>
         }
@@ -38,7 +38,7 @@ export default function Layout({ children, showTicker = true, showSideAds = true
         
         {/* Right Ad Column */}
         {showSideAds &&
-        <div data-ev-id="ev_6455f33204" className="hidden xl:block w-[180px] shrink-0 px-2 pt-4">
+        <div data-ev-id="ev_6455f33204" className="hidden xl:block w-[180px] shrink-0 px-2 pt-4 sticky top-20 self-start">
             <FloatingAd pageType={pageType} side="right" section={section} articleId={articleId} />
           </div>
         }
