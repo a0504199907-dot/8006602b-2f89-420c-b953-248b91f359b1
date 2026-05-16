@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router';
 import App from './App';
 import { AppProviders } from './providers';
 import { initPWA } from './lib/pwa';
+import { initGA } from './lib/analytics';
 import './index.css';
 
 /**
@@ -12,6 +13,7 @@ import './index.css';
 
 // Initialize PWA (Service Worker + Install Prompt)
 initPWA();
+initGA();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
