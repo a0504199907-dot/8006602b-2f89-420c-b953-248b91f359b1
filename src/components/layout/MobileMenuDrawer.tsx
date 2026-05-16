@@ -33,9 +33,9 @@ export default function MobileMenuDrawer() {
   useEffect(() => {
     if (isOpen) {
       const prev = document.body.style.overflow;
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflowX = 'clip';
       return () => {
-        document.body.style.overflow = prev;
+        document.body.style.overflowX = '';
       };
     }
   }, [isOpen]);
