@@ -21,7 +21,8 @@ import {
   Activity,
   Loader2,
   ChevronDown,
-  Download } from
+  Download,
+  ExternalLink } from
 'lucide-react';
 
 interface OverviewStats {
@@ -94,7 +95,7 @@ export default function SiteAnalytics() {
   const [loading, setLoading] = useState(true);
   const [dateRange, setDateRange] = useState<DateRange>('7d');
   const [refreshing, setRefreshing] = useState(false);
-  const [activeTab, setActiveTab] = useState<'overview' | 'content' | 'realtime'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'content' | 'realtime' | 'google-analytics'>('overview');
 
   useEffect(() => {
     fetchAnalytics();
@@ -387,7 +388,8 @@ export default function SiteAnalytics() {
           {[
           { id: 'overview', label: 'סקירה כללית', icon: BarChart3 },
           { id: 'content', label: 'תוכן', icon: FileText },
-          { id: 'realtime', label: 'זמן אמת', icon: Activity }].
+          { id: 'realtime', label: 'זמן אמת', icon: Activity },
+          { id: 'google-analytics', label: 'Google Analytics', icon: ExternalLink }].
           map((tab) =>
           <button data-ev-id="ev_04686951f7"
           key={tab.id}
@@ -650,6 +652,81 @@ export default function SiteAnalytics() {
                 </div>
               </div>
           }
+
+            {/* Google Analytics Tab */}
+            {activeTab === 'google-analytics' &&
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+                <div className="flex flex-col gap-2">
+                  <h2 className="text-xl font-bold text-white">Google Analytics 4</h2>
+                  <p className="text-zinc-400 text-sm">נתונים מ-Google Analytics — פתח את הדשבורד לצפייה בנתונים מלאים</p>
+                </div>
+
+                <div className="bg-zinc-900 rounded-xl p-5 border border-zinc-800 flex items-center justify-between">
+                  <div>
+                    <p className="text-zinc-400 text-xs mb-1">Measurement ID</p>
+                    <p className="text-amber-400 font-mono font-bold text-lg">G-CVK837ZZGY</p>
+                  </div>
+                  <div className="flex items-center gap-2 bg-green-500/10 text-green-400 rounded-lg px-3 py-1.5 text-sm">
+                    <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                    פעיל
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <a href="https://analytics.google.com/analytics/web/" target="_blank" rel="noopener noreferrer" className="bg-zinc-900 border border-zinc-800 hover:border-amber-500/50 rounded-xl p-5 flex items-center gap-4 transition-all group">
+                    <div className="w-12 h-12 bg-amber-500/10 rounded-xl flex items-center justify-center group-hover:bg-amber-500/20 transition-colors">
+                      <BarChart3 className="w-6 h-6 text-amber-400" />
+                    </div>
+                    <div>
+                      <p className="text-white font-semibold">דשבורד GA4</p>
+                      <p className="text-zinc-400 text-sm">פתח ב-Google Analytics</p>
+                    </div>
+                    <ExternalLink className="w-4 h-4 text-zinc-500 mr-auto group-hover:text-amber-400 transition-colors" />
+                  </a>
+
+                  <a href="https://analytics.google.com/analytics/web/#/realtime" target="_blank" rel="noopener noreferrer" className="bg-zinc-900 border border-zinc-800 hover:border-amber-500/50 rounded-xl p-5 flex items-center gap-4 transition-all group">
+                    <div className="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center group-hover:bg-blue-500/20 transition-colors">
+                      <Activity className="w-6 h-6 text-blue-400" />
+                    </div>
+                    <div>
+                      <p className="text-white font-semibold">זמן אמת</p>
+                      <p className="text-zinc-400 text-sm">משתמשים פעילים עכשיו</p>
+                    </div>
+                    <ExternalLink className="w-4 h-4 text-zinc-500 mr-auto group-hover:text-amber-400 transition-colors" />
+                  </a>
+
+                  <a href="https://analytics.google.com/analytics/web/" target="_blank" rel="noopener noreferrer" className="bg-zinc-900 border border-zinc-800 hover:border-amber-500/50 rounded-xl p-5 flex items-center gap-4 transition-all group">
+                    <div className="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center group-hover:bg-green-500/20 transition-colors">
+                      <Users className="w-6 h-6 text-green-400" />
+                    </div>
+                    <div>
+                      <p className="text-white font-semibold">קהל יעד</p>
+                      <p className="text-zinc-400 text-sm">דמוגרפיה ומיקומות</p>
+                    </div>
+                    <ExternalLink className="w-4 h-4 text-zinc-500 mr-auto group-hover:text-amber-400 transition-colors" />
+                  </a>
+
+                  <a href="https://analytics.google.com/analytics/web/" target="_blank" rel="noopener noreferrer" className="bg-zinc-900 border border-zinc-800 hover:border-amber-500/50 rounded-xl p-5 flex items-center gap-4 transition-all group">
+                    <div className="w-12 h-12 bg-purple-500/10 rounded-xl flex items-center justify-center group-hover:bg-purple-500/20 transition-colors">
+                      <TrendingUp className="w-6 h-6 text-purple-400" />
+                    </div>
+                    <div>
+                      <p className="text-white font-semibold">מקורות תנועה</p>
+                      <p className="text-zinc-400 text-sm">מאיפה מגיעים הגולשים</p>
+                    </div>
+                    <ExternalLink className="w-4 h-4 text-zinc-500 mr-auto group-hover:text-amber-400 transition-colors" />
+                  </a>
+                </div>
+
+                <div className="bg-blue-500/5 border border-blue-500/20 rounded-xl p-4 flex gap-3">
+                  <Globe className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-blue-300 font-medium text-sm mb-1">הערה</p>
+                    <p className="text-zinc-400 text-sm">הנתונים ב-Google Analytics מתעדכנים בעיכוב של עד 24 שעות. לנתונים בזמן אמת השתמש בכרטיסיית זמן אמת בדשבורד GA4.</p>
+                  </div>
+                </div>
+              </motion.div>
+            }
           </>
         }
       </div>
