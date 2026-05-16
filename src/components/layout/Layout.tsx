@@ -22,13 +22,22 @@ export default function Layout({ children, showTicker = true, showSideAds = true
       <Header />
       {showTicker && <NewsTicker />}
       
-      {/* Content with side ads */}
-      <div data-ev-id="ev_99f5f9e784" className="flex items-start">
-        {/* Left Ad Column */}
-        {showSideAds &&
-        <div data-ev-id="ev_7d69ab93a5" className="hidden xl:block w-[180px] shrink-0 px-2 pt-4 sticky top-20 self-start">
+      {/* Fixed Side Ad Overlays */}
+      {showSideAds && (
+        <>
+          <div className="hidden xl:flex fixed left-0 top-1/2 -translate-y-1/2 w-[180px] px-2 z-40 items-center justify-center">
             <FloatingAd pageType={pageType} side="left" section={section} articleId={articleId} />
           </div>
+          <div className="hidden xl:flex fixed right-0 top-1/2 -translate-y-1/2 w-[180px] px-2 z-40 items-center justify-center">
+            <FloatingAd pageType={pageType} side="right" section={section} articleId={articleId} />
+          </div>
+        </>
+      )}
+      {/* Content with side ads */}
+      <div data-ev-id="ev_99f5f9e784" className="flex">
+        {/* Left Ad Column */}
+        {showSideAds &&
+        <div data-ev-id="ev_7d69ab93a5" className="hidden xl:block w-[180px] shrink-0" />
         }
         
         {/* Main Content */}
@@ -38,9 +47,7 @@ export default function Layout({ children, showTicker = true, showSideAds = true
         
         {/* Right Ad Column */}
         {showSideAds &&
-        <div data-ev-id="ev_6455f33204" className="hidden xl:block w-[180px] shrink-0 px-2 pt-4 sticky top-20 self-start">
-            <FloatingAd pageType={pageType} side="right" section={section} articleId={articleId} />
-          </div>
+        <div data-ev-id="ev_6455f33204" className="hidden xl:block w-[180px] shrink-0" />
         }
       </div>
       
