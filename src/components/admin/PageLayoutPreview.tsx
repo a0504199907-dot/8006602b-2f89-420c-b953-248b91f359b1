@@ -64,7 +64,7 @@ function AdSlot({
         <div className="flex items-center gap-1.5 min-w-0">
           <span className="text-[11px] font-bold text-gray-700 truncate">{label}</span>
           {hasAny && (
-            <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${hasActive ? 'bg-green-500 text-white' : 'bg-amber-500 text-white'}`} title="פעיל / סה\"כ">
+            <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${hasActive ? 'bg-green-500 text-white' : 'bg-amber-500 text-white'}`} title="פעיל מתוך סה״כ">
               {activeCount}/{placements.length}
             </span>
           )}
