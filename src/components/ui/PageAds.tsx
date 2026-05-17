@@ -186,8 +186,8 @@ export default function PageAds({
 
   // Size classes based on slot - top banners are full width
   const sizeClasses: Record<string, string> = {
-    '728x90': 'h-[90px] w-full',
-    '970x90': 'h-[90px] w-full',
+    '728x90': 'h-[180px] w-full',
+    '970x90': 'h-[180px] w-full',
     '300x250': 'h-[250px]',
     '300x600': 'h-[600px]',
     '970x250': 'h-[250px] w-full',
