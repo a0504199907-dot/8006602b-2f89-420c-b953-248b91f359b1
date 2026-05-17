@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { Clock } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import SectionPageLayout, { SectionItem } from '@/components/ui/SectionPageLayout';
 
@@ -64,13 +63,11 @@ export default function Before18Page() {
     <SectionPageLayout
       title="לפני 18 שנה"
       subtitle="זכרונות מהעבר"
-      icon={<Clock className="w-6 h-6" />}
       items={sectionItems}
       loading={loading}
       basePath="/before-18"
       getImage={(item) => item.main_image || item.image_url || ''}
       getBadge={(item) => item.badge || null}
-      emptyIcon={<Clock className="w-16 h-16" />}
       emptyText="אין פריטים להצגה"
       section="before-18"
     />
