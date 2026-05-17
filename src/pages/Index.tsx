@@ -365,42 +365,7 @@ export default function Index() {
       )}
 
       {/* Events + Trending */}
-      <section data-ev-id="ev_248f84bdc8" className="py-8 bg-muted/30">
-        <div data-ev-id="ev_a4dad923a2" className="container mx-auto px-4">
-          <div data-ev-id="ev_95a41d249f" className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-            <div data-ev-id="ev_131cc8b5e4" className="bg-surface rounded-xl p-5 border border-border shadow-sm">
-              <div data-ev-id="ev_934028d93c" className="flex items-center gap-2 mb-4">
-                <Calendar className="w-5 h-5 text-secondary" />
-                <h3 data-ev-id="ev_98b4ff18c6" className="font-bold text-foreground">אירועים קרובים</h3>
-              </div>
-              {events.length === 0 ?
-              <div data-ev-id="ev_0f42b72407" className="flex flex-col gap-2">{[0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-16 rounded-lg" />)}</div> :
-              <div data-ev-id="ev_971c5a1ba3" className="flex flex-col gap-2">{events.slice(0, 4).map((event) => <EventCard key={event.id} event={event} variant="compact" />)}</div>
-              }
-              <Link to="/events" className="block mt-4 text-center py-2 bg-secondary/10 text-secondary text-sm font-medium rounded-lg hover:bg-secondary hover:text-primary transition-colors">לכל האירועים</Link>
-            </div>
 
-            <div data-ev-id="ev_a0eb704c8d" className="bg-surface rounded-xl p-5 border border-border shadow-sm">
-              <div data-ev-id="ev_6161c10227" className="flex items-center gap-2 mb-4">
-                <TrendingUp className="w-5 h-5 text-orange-500" />
-                <h3 data-ev-id="ev_7955f6a52c" className="font-bold text-foreground">הנקראים ביותר</h3>
-              </div>
-              {siahArticles.length > 0 ?
-              <div data-ev-id="ev_b0b8f27960" className="flex flex-col gap-3">
-                  {siahArticles.slice(0, 4).map((article, idx) =>
-                <Link key={article.id} to={`/siah/${article.id}`} className="flex items-start gap-3 group">
-                      <span data-ev-id="ev_efc4537c46" className="text-2xl font-bold text-secondary/30 group-hover:text-secondary transition-colors w-6">{idx + 1}</span>
-                      <h4 data-ev-id="ev_8f22cdab0c" className="font-medium text-sm text-foreground line-clamp-2 group-hover:text-secondary transition-colors">{article.title}</h4>
-                    </Link>
-                )}
-                </div> :
-
-              <div data-ev-id="ev_632c0127f6" className="text-center py-4 text-muted-foreground text-sm">אין כתבות</div>
-              }
-            </div>
-          </div>
-        </div>
-      </section>
 
       <div data-ev-id="ev_1eab7b5be8" className="container mx-auto px-4 py-6">
         <PageAds pageType="home" position="bottom" />
