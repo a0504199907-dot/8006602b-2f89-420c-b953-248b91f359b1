@@ -20,7 +20,7 @@ function ContentBlockRenderer({ blocks, htmlContent, textSizeClass }: {blocks: C
     if (htmlContent) {
       return (
         <div data-ev-id="ev_13a94f3630"
-        className={`article-content prose prose-lg max-w-none ${textSizeClass}`}
+        className={`article-content max-w-none ${textSizeClass}`}
         dangerouslySetInnerHTML={{ __html: htmlContent }} />);
 
 
@@ -36,7 +36,7 @@ function ContentBlockRenderer({ blocks, htmlContent, textSizeClass }: {blocks: C
             return block.content ?
             <div data-ev-id="ev_6b33506c92"
             key={block.id}
-            className="prose prose-lg max-w-none mb-6"
+            className="max-w-none mb-6"
             dangerouslySetInnerHTML={{ __html: block.content }} /> :
 
             null;
