@@ -207,17 +207,11 @@ export default function ArticleDetail() {
                   </div>
                 </div>
 
-                {/* Action Bar */}
-                <ActionBar
-                  title={article.title}
-                  content={`${article.excerpt || ''} ${article.content || ''}`}
-                  className="pt-4 border-t border-border" />
-
-
-                {/* Text Size Selector */}
-                <div data-ev-id="ev_9d5a2eaf07" className="mt-4">
-                  <TextSizeSelector onSizeChange={setTextSize} />
-                </div>
+          {/* Action Bar + Text Size on one row */}
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <TextSizeSelector onSizeChange={setTextSize} />
+            <ActionBar title={article.title} content={`${article.excerpt || ''} ${article.content || ''}`} />
+          </div>
 
                 {/* Text to Speech Player */}
                 {(article.excerpt || article.content) &&
