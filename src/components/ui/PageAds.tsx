@@ -34,8 +34,6 @@ export default function PageAds({
 }: PageAdsProps) {
   const [ads, setAds] = useState<AdData[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [imageLoaded, setImageLoaded] = useState(false);
   const impressionTracked = useRef<Set<string>>(new Set());
 
   // Get slot config from AD_SLOTS
@@ -47,17 +45,14 @@ export default function PageAds({
     fetchAds();
   }, [slotName, size, section, articleId]);
 
-  // Rotation
   useEffect(() => {
     if (ads.length <= 1) return;
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % ads.length);
-      setImageLoaded(false); // Reset for new image
     }, rotationInterval);
     return () => clearInterval(interval);
   }, [ads.length, rotationInterval]);
 
-  // Track impression
   useEffect(() => {
     const currentAd = ads[currentIndex];
     if (currentAd && !impressionTracked.current.has(currentAd.id)) {
@@ -67,20 +62,14 @@ export default function PageAds({
   }, [currentIndex, ads]);
 
   const fetchAds = async () => {
-    if (!supabase || !slotName) {
-      setLoading(false);
-      return;
-    }
+    if (!supabase || !slotName) return;
 
-    // Longer timeout - 15 seconds
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 15000);
 
     try {
       const now = new Date().toISOString();
 
-      // Fetch ALL placements for this slot - prioritization happens client-side
-      // Priority order: article_id > section > default
       const { data, error } = await supabase
         .from('ad_placements')
         .select(`
@@ -114,16 +103,15 @@ export default function PageAds({
 
       if (error) throw error;
 
-      // Filter and prioritize placements
       const articlePlacements: AdData[] = [];
       const sectionPlacements: AdData[] = [];
       const defaultPlacements: AdData[] = [];
 
       for (const placement of data || []) {
-        const creative = placement.ad_creatives as any;
+        const creative = (placement as any).ad_creatives;
         if (!creative || !creative.is_active) continue;
 
-        const campaign = creative.ad_campaigns as any;
+        const campaign = creative.ad_campaigns;
         if (!campaign || campaign.status !== 'active') continue;
 
         if (campaign.start_date && new Date(campaign.start_date) > new Date(now)) continue;
@@ -138,24 +126,19 @@ export default function PageAds({
           cta_text: creative.cta_text
         };
 
-        // Categorize by targeting level
         if (placement.article_id) {
-          // Article-specific placement
-          if (articleId && placement.article_id === articleId) {
+          if (placement.article_id === articleId) {
             articlePlacements.push(adData);
           }
         } else if (placement.section && placement.section !== 'default') {
-          // Section-specific placement
-          if (section && placement.section === section) {
+          if (placement.section === section) {
             sectionPlacements.push(adData);
           }
         } else {
-          // Default placement (no section or section='default', no article_id)
           defaultPlacements.push(adData);
         }
       }
 
-      // Use highest priority placements available (article > section > default)
       let validAds: AdData[] = [];
       if (articlePlacements.length > 0) {
         validAds = articlePlacements;
@@ -168,12 +151,9 @@ export default function PageAds({
       setAds(validAds);
     } catch (err: any) {
       clearTimeout(timeoutId);
-      // Silent fail on timeout/abort
       if (err?.name !== 'AbortError') {
         console.error('Error fetching ads:', err);
       }
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -184,7 +164,6 @@ export default function PageAds({
     }
   };
 
-  // Size classes based on slot - top banners are full width
   const sizeClasses: Record<string, string> = {
     '728x90': 'h-[180px] w-full',
     '970x90': 'h-[180px] w-full',
@@ -196,83 +175,48 @@ export default function PageAds({
   };
 
   const heightClass = sizeClasses[size] || 'h-[250px]';
-
-  // Check if this is a full-width banner size
-  const isFullWidth = ['728x90', '970x90', '970x250', '320x100'].includes(size);
-  const widthClass = isFullWidth ? 'w-full' : '';
-
-  // Show placeholder if no ads and showPlaceholder is true
-  if (!loading && ads.length === 0) {
-    if (!showPlaceholder) return null;
-
-    return (
-      <div data-ev-id="ev_c2b51530d7" className={`${heightClass} ${widthClass} bg-gradient-to-br from-muted/50 to-muted/30 border-2 border-dashed border-muted-foreground/20 flex flex-col items-center justify-center text-muted-foreground/40 ${className}`}>
-        <Megaphone className="w-8 h-8 mb-2" />
-        <span data-ev-id="ev_b35000df75" className="text-xs font-medium">מקום לפרסומת</span>
-      </div>);
-
-
-  }
-
-  // Still loading
-  if (loading) {
-    return (
-      <div data-ev-id="ev_ad2d44fb2f" className={`${heightClass} ${widthClass} bg-muted/30 animate-pulse ${className}`} />);
-
-  }
+  const isFullWidth = size === '728x90' || size === '970x90' || size === '970x250' || size === '320x100';
+  const widthClass = isFullWidth ? 'w-full' : 'w-full';
 
   const currentAd = ads[currentIndex];
-  if (!currentAd) return null;
+
+  if (!currentAd) {
+    if (!showPlaceholder) return null;
+    return (
+      <div className={`${heightClass} ${widthClass} bg-gradient-to-br from-muted/50 to-muted/30 border-2 border-dashed border-muted-foreground/20 flex flex-col items-center justify-center text-muted-foreground/40 ${className}`}>
+        <Megaphone className="w-8 h-8 mb-2" />
+        <span className="text-xs font-medium">מקום לפרסומת</span>
+      </div>);
+  }
 
   return (
-    <div data-ev-id="ev_1901fd4c64" className={`relative overflow-hidden ${widthClass} ${className}`}>
+    <div className={`relative overflow-hidden ${widthClass} ${className}`}>
       <AnimatePresence mode="wait">
         <motion.div
           key={currentAd.id}
-          initial={{ opacity: 0 }}
+          initial={false}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
+          transition={{ duration: 0.15 }}
           className={`cursor-pointer ${heightClass}`}
           style={{ backgroundColor: currentAd.background_color || '#f5f5f5' }}
           onClick={() => handleClick(currentAd)}>
 
           {currentAd.image_url ?
-          <>
-              {!imageLoaded &&
-            <div data-ev-id="ev_14d230f807" className="w-full h-full bg-muted/30 animate-pulse absolute inset-0" />
-            }
-              <img data-ev-id="ev_b1a8be020d"
+          <img
             src={currentAd.image_url}
             alt=""
-            className={`w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
-            loading="lazy"
-            onLoad={() => setImageLoaded(true)} />
+            className="w-full h-full object-cover"
+            loading="eager"
+            fetchPriority="high"
+            decoding="async" /> :
 
-            </> :
-
-          <div data-ev-id="ev_df970898ff" className="w-full h-full flex items-center justify-center">
-              <span data-ev-id="ev_4828797e89" className="text-gray-500">{currentAd.title || ''}</span>
+          <div className="w-full h-full flex items-center justify-center">
+              <span className="text-gray-500">{currentAd.title || ''}</span>
             </div>
           }
         </motion.div>
       </AnimatePresence>
-
-      {/* NO "פרסומת" label - removed */}
-
-      {/* Pagination dots */}
-      {ads.length > 1 &&
-      <div data-ev-id="ev_1060f2a823" className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
-          {ads.map((_, idx) =>
-        <button data-ev-id="ev_3172ad4ab6"
-        key={idx}
-        onClick={(e) => {e.stopPropagation();setCurrentIndex(idx);setImageLoaded(false);}}
-        className={`w-1.5 h-1.5 rounded-full transition-colors ${idx === currentIndex ? 'bg-white' : 'bg-white/50'}`} />
-
-        )}
-        </div>
-      }
     </div>);
-
 
 }
