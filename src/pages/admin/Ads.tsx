@@ -1865,21 +1865,11 @@ export default function AdminAds() {
                   <label data-ev-id="ev_3f2fa09891" className="block text-sm font-medium mb-2">קישור (URL)</label>
                   <input data-ev-id="ev_e3e4bd93b9"
                 type="url"
-                value={creativeForm.click_url}
-                onChange={(e) => setCreativeForm((prev) => ({ ...prev, click_url: e.target.value }))}
+                value={creativeForm.target_url}
+                onChange={(e) => setCreativeForm((prev) => ({ ...prev, target_url: e.target.value }))}
                 className="w-full border border-border rounded-lg py-2.5 px-4 bg-background"
                 placeholder="https://..." />
 
-                </div>
-                <div data-ev-id="ev_c20c23ef30" className="flex items-center gap-2">
-                  <input data-ev-id="ev_73dcbd1f39"
-                type="checkbox"
-                id="creative-active"
-                checked={creativeForm.active}
-                onChange={(e) => setCreativeForm((prev) => ({ ...prev, active: e.target.checked }))}
-                className="w-5 h-5 rounded border-border" />
-
-                  <label data-ev-id="ev_4e5adfdc01" htmlFor="creative-active" className="text-sm font-medium">פעיל</label>
                 </div>
                 <button data-ev-id="ev_53aa61bfe7"
               type="submit"
