@@ -85,12 +85,10 @@ export default function NewsBatziburDetail() {
             </div>
           </motion.header>
 
-          {/* Action Bar */}
-          <ActionBar title={item.title} content={textContent} className="mb-6" />
-
-          {/* Text Size Selector */}
-          <div data-ev-id="ev_576638b539" className="mb-6">
+          {/* Action Bar + Text Size on one row */}
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
             <TextSizeSelector onSizeChange={setTextSize} />
+            <ActionBar title={item.title} content={textContent} />
           </div>
 
           {/* Text to Speech Player */}
