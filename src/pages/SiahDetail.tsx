@@ -152,12 +152,10 @@ export default function SiahDetail() {
             </div>
           </motion.header>
 
-          {/* Action Bar */}
-          <ActionBar title={article.title} content={getTextContent()} className="mb-6" />
-
-          {/* Text Size Selector */}
-          <div data-ev-id="ev_36645b6afc" className="mb-6">
+          {/* Action Bar + Text Size on one row */}
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
             <TextSizeSelector onSizeChange={setTextSize} />
+            <ActionBar title={article.title} content={getTextContent()} />
           </div>
 
           {/* Text to Speech Player */}
@@ -199,7 +197,7 @@ export default function SiahDetail() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className={`prose prose-xl max-w-none text-foreground leading-loose ${getTextSizeClass(textSize)}`}
+          className={`max-w-none text-foreground leading-loose ${getTextSizeClass(textSize)}`}
           style={{ direction: 'rtl' }}
           dangerouslySetInnerHTML={{ __html: article.content }} />
 
