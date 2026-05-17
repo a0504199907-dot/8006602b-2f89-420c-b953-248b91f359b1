@@ -132,12 +132,10 @@ export default function Before18Detail() {
             </div>
           </motion.header>
 
-          {/* Action Bar */}
-          <ActionBar title={item.title} content={item.description || ''} className="mb-6" />
-
-          {/* Text Size Selector */}
-          <div data-ev-id="ev_0caed27bf5" className="mb-6">
+          {/* Action Bar + Text Size on one row */}
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
             <TextSizeSelector onSizeChange={setTextSize} />
+            <ActionBar title={item.title} content={item.description || ''} />
           </div>
 
           {/* Text to Speech Player */}
