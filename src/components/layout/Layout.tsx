@@ -25,7 +25,7 @@ export default function Layout({ children, showTicker = true, showSideAds = true
       {showTicker && <NewsTicker />}
 
       {/* Content with side ads */}
-      <div data-ev-id="ev_99f5f9e784" className="flex">
+      <div data-ev-id="ev_99f5f9e784" className="flex pb-4">
         {/* Left Ad Column */}
         {showSideAds &&
           <div
