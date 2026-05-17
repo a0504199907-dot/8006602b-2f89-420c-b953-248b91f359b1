@@ -27,10 +27,10 @@ export default function SideArticle({ article, index }: SideArticleProps) {
 
       <Link
         to={`/article/${article.id}`}
-        className="group flex gap-3 sm:gap-4 p-3 sm:p-4 bg-surface rounded-[12px] border border-border/40 hover:border-secondary/40 hover:shadow-card transition-all duration-300">
+        className="group flex flex-col gap-3 sm:gap-4 p-3 sm:p-4 bg-surface rounded-[12px] border border-border/40 hover:border-secondary/40 hover:shadow-card transition-all duration-300">
 
         <motion.div
-          className="w-20 h-16 sm:w-24 sm:h-20 rounded-[10px] overflow-hidden shrink-0"
+          className="w-full aspect-[16/9] rounded-[10px] overflow-hidden"
           whileHover={{ scale: 1.05 }}>
 
           <img data-ev-id="ev_011ee57c07"
