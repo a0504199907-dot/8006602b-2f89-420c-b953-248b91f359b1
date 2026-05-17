@@ -157,8 +157,8 @@ export default function SectionPageLayout({
                 transition={{ delay: (idx + 1) * 0.1 }}
                 className="flex-1">
 
-                    <Link to={`${basePath}/${item.id}`} className="group flex gap-3 sm:gap-4 h-full">
-                      <div data-ev-id="ev_side_img" className="w-32 sm:w-40 md:w-48 shrink-0 rounded-xl overflow-hidden">
+                    <Link to={`${basePath}/${item.id}`} className="group flex flex-col gap-3 sm:gap-4 h-full">
+                      <div data-ev-id="ev_side_img" className="w-full rounded-xl overflow-hidden">
                         <img
                       data-ev-id="ev_1a9faec262"
                       src={getImage(item)}
@@ -166,7 +166,7 @@ export default function SectionPageLayout({
                       className="w-full h-full object-cover aspect-[4/3] group-hover:scale-105 transition-transform duration-500" />
 
                       </div>
-                      <div data-ev-id="ev_side_content" className="flex flex-col justify-center flex-1 min-w-0">
+                      <div data-ev-id="ev_side_content" className="flex flex-col justify-start min-w-0">
                         {getBadge && getBadge(item) &&
                     <span data-ev-id="ev_31e223a98b" className="text-secondary text-xs font-medium mb-1">
                             {getBadge(item)}
